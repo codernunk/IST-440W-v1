@@ -37,9 +37,9 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new RecipeListFragment(), "ONE");
-//        adapter.addFragment(new TwoFragment(), "TWO");
-//        adapter.addFragment(new ThreeFragment(), "THREE");
+        adapter.addFragment(new RecipeDetailsFragment(), "Overview");
+        adapter.addFragment(new CookingDirectionsFragment(), "Directions");
+        adapter.addFragment(new RecipeShoppingListFragment(), "Shopping List");
         viewPager.setAdapter(adapter);
     }
 

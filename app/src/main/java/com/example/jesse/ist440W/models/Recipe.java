@@ -8,6 +8,7 @@ import java.util.ArrayList;
  */
 public class Recipe {
     private int recipeId;
+    private String name;
     private FoodType type;
     private ArrayList<Ingredient> ingredients;
     private int prepTime;
@@ -16,8 +17,9 @@ public class Recipe {
     private String yieldDescriptor;
     private ArrayList<Instruction> instructions;
 
-    public Recipe(int recipeId, FoodType type, int prepTime, int cookTime, int yield, String yieldDescriptor) {
+    public Recipe(int recipeId, String name, FoodType type, int prepTime, int cookTime, int yield, String yieldDescriptor) {
         this.recipeId = recipeId;
+        this.name = name;
         this.type = type;
         this.prepTime = prepTime;
         this.cookTime = cookTime;
@@ -37,6 +39,14 @@ public class Recipe {
 
     public int getRecipeId() {
         return recipeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public FoodType getType() {
