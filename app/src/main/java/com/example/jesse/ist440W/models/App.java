@@ -10,13 +10,15 @@ import java.util.ArrayList;
  */
 public class App {
 
+    public static final String LOG_TITLE = "Recipe";
+
     private static App _instance;
 
     private ArrayList<Recipe> _recipes;
 
     private Recipe[] _defaultRecipes = new Recipe[]{
-            new Recipe(1, "Steak", Recipe.FoodType.Dinner, 1, 1, 1, "steak"),
-            new Recipe(1, "Cake", Recipe.FoodType.Dessert, 1, 1, 1, "slices"),
+            new Recipe(1, "Steak", Recipe.FoodType.Dinner, 2000, 1000, 1, "steak"),
+            new Recipe(1, "Cake", Recipe.FoodType.Dessert, 1000, 2000, 8, "slice(s)"),
     };
 
     public static App getInstance(){

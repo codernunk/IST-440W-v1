@@ -1,6 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dip" >
 
-</LinearLayout>
+    <!-- ListRow Left side Thumbnail image -->
+
+    <LinearLayout
+        android:id="@+id/thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dip"
+        android:padding="3dip" >
+
+        <ImageView
+            android:id="@+id/recipeThumbnail"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:contentDescription=""/>
+    </LinearLayout>
+
+    <!-- Menu name -->
+
+    <TextView
+        android:id="@+id/recipeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recipe Name"
+        android:textColor="#040404"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/thumbnail" />
+
+    <!--&lt;!&ndash; Description &ndash;&gt;-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/description"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignBottom="@+id/thumbnail"-->
+        <!--android:layout_below="@id/recipeName"-->
+        <!--android:layout_marginTop="1dip"-->
+        <!--android:layout_toRightOf="@+id/thumbnail"-->
+        <!--android:text=""-->
+        <!--android:textColor="#343434"-->
+        <!--android:textSize="10sp"-->
+        <!--tools:ignore="SmallSp" />-->
+
+    <!--&lt;!&ndash; Price &ndash;&gt;-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/price"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignTop="@id/menu_name"-->
+        <!--android:layout_marginRight="5dip"-->
+        <!--android:gravity="right"-->
+        <!--android:text=""-->
+        <!--android:textColor="#10bcc9"-->
+        <!--android:textSize="10sp"-->
+        <!--android:textStyle="bold"-->
+        <!--tools:ignore="SmallSp" />-->
+
+</RelativeLayout>

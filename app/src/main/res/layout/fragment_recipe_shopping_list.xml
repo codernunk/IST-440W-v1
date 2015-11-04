@@ -10,7 +10,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Steak "
         android:textSize="30dp"
-        android:id="@+id/textView"
+        android:id="@+id/tvRecipeName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="27dp"
@@ -23,7 +23,7 @@
         android:id="@+id/checkBox"
         android:checked="false"
         android:layout_marginTop="33dp"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/tvRecipeName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

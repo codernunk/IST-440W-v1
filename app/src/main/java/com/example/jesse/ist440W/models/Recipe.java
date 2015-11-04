@@ -1,12 +1,13 @@
 package com.example.jesse.ist440W.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Represents one recipe.
  * Created by Jesse on 9/22/2015.
  */
-public class Recipe {
+public class Recipe implements Serializable {
     private int recipeId;
     private String name;
     private FoodType type;
@@ -97,7 +98,7 @@ public class Recipe {
         return instructions;
     }
 
-    enum FoodType{
+    public enum FoodType {
         Breakfast("Breakfast"), Lunch("Lunch"), Dinner("Dinner"),
         Dessert("Dessert"), Snack("Snack"), Other("Other");
 
