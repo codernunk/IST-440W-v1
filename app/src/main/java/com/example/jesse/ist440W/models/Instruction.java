@@ -1,10 +1,12 @@
 package com.example.jesse.ist440W.models;
 
+import java.io.Serializable;
+
 /**
  * Represents one instruction in a recipe.
  * Created by Jesse on 9/22/2015.
  */
-public class Instruction {
+public class Instruction implements Serializable {
     private int instructionId;
     private String instructions;
     private int orderId;

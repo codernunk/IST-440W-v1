@@ -2,6 +2,7 @@ package com.example.jesse.ist440W.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Represents one recipe.
@@ -28,6 +29,13 @@ public class Recipe implements Serializable {
         this.yieldDescriptor = yieldDescriptor;
         this.ingredients = new ArrayList<Ingredient>();
         this.instructions = new ArrayList<Instruction>();
+    }
+
+    public Recipe(int recipeId, String name, FoodType type, int prepTime, int cookTime, int yield, String yieldDescriptor, Ingredient[] ingredients, Instruction[] instructions) {
+        this(recipeId, name, type, prepTime, cookTime, yield, yieldDescriptor);
+
+        this.ingredients = new ArrayList<Ingredient>(Arrays.asList(ingredients));
+        this.instructions = new ArrayList<Instruction>(Arrays.asList(instructions));
     }
 
     public void addIngredient(Ingredient i){

@@ -17,8 +17,28 @@ public class App {
     private ArrayList<Recipe> _recipes;
 
     private Recipe[] _defaultRecipes = new Recipe[]{
-            new Recipe(1, "Steak", Recipe.FoodType.Dinner, 2000, 1000, 1, "steak"),
-            new Recipe(1, "Cake", Recipe.FoodType.Dessert, 1000, 2000, 8, "slice(s)"),
+            new Recipe(1, "Steak", Recipe.FoodType.Dinner, 2000, 1000, 1, "steak",
+                    new Ingredient[]{
+                            new Ingredient(1, 1, "steak", "12 oz"),
+                            new Ingredient(1, 1, "A1 steak sauce", "12 oz bottle"),
+                            new Ingredient(1, 1, "worcestershire sauce", "1 tbsp"),
+                    },
+                    new Instruction[]{
+                            new Instruction(1, "Grill the steak", 1),
+                            new Instruction(1, "Put sauces on it", 2),
+                    }
+            ),
+            new Recipe(1, "Cake", Recipe.FoodType.Dessert, 1000, 2000, 8, "slice(s)",
+                    new Ingredient[]{
+                            new Ingredient(1, 1, "cake", "12 oz"),
+                            new Ingredient(1, 1, "vanilla icing", "container"),
+                            new Ingredient(1, 1, "eggs", "1 tbsp"),
+                    },
+                    new Instruction[]{
+                            new Instruction(1, "Grill the cake", 1),
+                            new Instruction(1, "Put icing on it", 2),
+                    }
+            ),
     };
 
     public static App getInstance(){
