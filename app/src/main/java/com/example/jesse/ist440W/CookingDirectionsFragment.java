@@ -1,6 +1,7 @@
 package com.example.jesse.ist440W;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -41,21 +43,50 @@ public class CookingDirectionsFragment extends Fragment {
         txtRecipeName.setText(r.getName());
 
         // Display the instructions as a list of strings
-        List<String> directionsList = new ArrayList<String>();
-
-        for (Instruction i : r.getInstructions()){
-            directionsList.add(i.getOrderId() + ". " + i.getInstructions());
-        }
-
-        ArrayAdapter<String> directionsArrayAdapter = new ArrayAdapter<String>(
-                getContext(),
-                android.R.layout.simple_list_item_1,
-                directionsList);
+        InstructionsListAdapter directionsArrayAdapter = new InstructionsListAdapter(getContext(), R.layout.recipe_direction_list_view, r.getInstructions());
 
         lvDirections = (ListView) view.findViewById(R.id.lvDirections);
         lvDirections.setAdapter(directionsArrayAdapter);
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    /**
+     * An inner class that helps to construct list items
+     * that show recipes.
+     */
+    private class InstructionsListAdapter extends ArrayAdapter<Instruction> {
+
+        private Context _context;
+
+        public InstructionsListAdapter(Context context, int textViewResourceId, List<Instruction> objects) {
+            super(context, textViewResourceId, objects);
+            // TODO Auto-generated constructor stub
+            this._context = context;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Instruction rowItem = getItem(position);
+
+            LayoutInflater mInflater = (LayoutInflater) _context
+                    .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.recipe_direction_list_view, null);
+
+                // Set the display's name to the recipe's name
+                TextView directionStep = (TextView) convertView.findViewById(R.id.directionStep);
+                directionStep.setText((position+1) + ". ");
+
+                TextView directionsDetails = (TextView) convertView.findViewById(R.id.directions);
+                directionsDetails.setText(rowItem.getInstructions());
+
+            } else {
+
+
+            }
+
+            return convertView;
+        }
     }
 }

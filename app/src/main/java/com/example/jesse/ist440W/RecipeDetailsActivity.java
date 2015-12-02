@@ -58,7 +58,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         adapter.addFragment(new RecipeDetailsFragment(), "Overview");
         adapter.addFragment(new RecipeIngredientsFragment(), "Ingredients");
         adapter.addFragment(new CookingDirectionsFragment(), "Directions");
-        adapter.addFragment(new RecipeShoppingListFragment(), "Shopping List");
+        //adapter.addFragment(new RecipeShoppingListFragment(), "Shopping List");
         viewPager.setAdapter(adapter);
     }
 

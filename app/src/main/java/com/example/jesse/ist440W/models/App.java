@@ -22,6 +22,8 @@ public class App {
 
     private ArrayList<Recipe> _recipes;
 
+    private ArrayList<ShoppingList> _shoppingLists;
+
     private Recipe[] _defaultRecipes = new Recipe[]{
             new Recipe(-1, "Steak", Recipe.FoodType.Dinner, 2000, 1000, 1, "steak",
                     new Ingredient[]{
@@ -102,6 +104,16 @@ public class App {
             ArrayList<Recipe> others = (new SQLiteDataAccess(context)).selectRecipes();
             _recipes.addAll(others);
 
+            _shoppingLists = new ArrayList<ShoppingList>();
+
+            ArrayList<ShoppingListItem> items = new ArrayList<ShoppingListItem>();
+
+            items.add(new ShoppingListItem(1, new Ingredient(1, 12, "Steak", "oz"), 1));
+
+            ShoppingList test = new ShoppingList(items);
+
+            _shoppingLists.add(test);
+
         }catch(Exception e){
             Log.e("ERRORS", e.getMessage());
         }
@@ -113,5 +125,10 @@ public class App {
     public Recipe[] getDefaultRecipes() {
         return _defaultRecipes;
     }
+
+    public ArrayList<ShoppingList> getShoppingLists() {
+        return _shoppingLists;
+    }
+
 
 }

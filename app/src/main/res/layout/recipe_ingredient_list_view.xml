@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dip" >
+
+    <!-- ListRow Left side Thumbnail image -->
+
+    <TableLayout
+        android:id="@+id/thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="5dip"
+        android:padding="3dip"
+
+        android:stretchColumns="*">
+
+        <TableRow>
+            <TextView
+                android:id="@+id/ingredientQuantity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1 OZ"
+                android:textColor="#040404"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:typeface="sans"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/thumbnail"
+                android:layout_span="1"/>
+
+            <TextView
+                android:id="@+id/ingredientName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Recipe Name"
+                android:textColor="#040404"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:typeface="sans"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/thumbnail"
+                android:layout_span="1"/>
+
+            <CheckBox
+                android:id="@+id/ingredientChecked"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:layout_span="1"/>
+        </TableRow>
+
+
+    </TableLayout>
+
+    <!-- Menu name -->
+
+
+
+    <!--&lt;!&ndash; Description &ndash;&gt;-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/description"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignBottom="@+id/thumbnail"-->
+        <!--android:layout_below="@id/recipeName"-->
+        <!--android:layout_marginTop="1dip"-->
+        <!--android:layout_toRightOf="@+id/thumbnail"-->
+        <!--android:text=""-->
+        <!--android:textColor="#343434"-->
+        <!--android:textSize="10sp"-->
+        <!--tools:ignore="SmallSp" />-->
+
+    <!--&lt;!&ndash; Price &ndash;&gt;-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/price"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignTop="@id/menu_name"-->
+        <!--android:layout_marginRight="5dip"-->
+        <!--android:gravity="right"-->
+        <!--android:text=""-->
+        <!--android:textColor="#10bcc9"-->
+        <!--android:textSize="10sp"-->
+        <!--android:textStyle="bold"-->
+        <!--tools:ignore="SmallSp" />-->
+
+</RelativeLayout>

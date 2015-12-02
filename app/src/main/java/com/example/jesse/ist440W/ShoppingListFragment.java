@@ -42,23 +42,23 @@ public class ShoppingListFragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
 
         _filteredShoppingLists = new ArrayList<ShoppingList>();
-//        for (Recipe r : App.getInstance().getRecipes()){
-//            _filteredShoppingLists.add(r);
-//        }
+        for (ShoppingList s : App.getInstance().getShoppingLists()){
+            _filteredShoppingLists.add(s);
+        }
 
-        _adapter = new ShoppingListAdapter(this.getContext(), R.layout.recipe_list_view, _filteredShoppingLists);
+        _adapter = new ShoppingListAdapter(this.getContext(), android.R.layout.simple_list_item_1, _filteredShoppingLists);
         setListAdapter(_adapter);
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Recipe r = (Recipe) parent.getItemAtPosition(position);
-
-                SQLiteDataAccess slda = new SQLiteDataAccess(getContext());
-                slda.insertRecipe(r);
-
-                Intent i = new Intent(getActivity(), RecipeDetailsActivity.class);
-                i.putExtra("Recipe", r);
-                startActivity(i);
+//                Recipe r = (Recipe) parent.getItemAtPosition(position);
+//
+//                SQLiteDataAccess slda = new SQLiteDataAccess(getContext());
+//                slda.insertRecipe(r);
+//
+//                Intent i = new Intent(getActivity(), RecipeDetailsActivity.class);
+//                i.putExtra("Recipe", r);
+//                startActivity(i);
             }
         });
     }
@@ -108,23 +108,16 @@ public class ShoppingListFragment extends ListFragment {
             LayoutInflater mInflater = (LayoutInflater) _context
                     .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.recipe_list_view, null);
+                convertView = mInflater.inflate(android.R.layout.simple_list_item_1, null);
 
-//                // Set the display's name to the recipe's name
-//                TextView recipeName = (TextView) convertView.findViewById(R.id.recipeName);
-//                recipeName.setText(rowItem.getName());
-//
-//                // Sets the image of the icon to the recipe's image (uses the search icon temporarily)
-//                ImageView recipeImage = (ImageView) convertView.findViewById(R.id.recipeThumbnail);
-//                recipeImage.setImageResource(R.drawable.ic_action_action_search);
+                // Set the display's name to the shopping list's name
+                TextView text = (TextView) convertView.findViewById(android.R.id.text1);
+                text.setText(rowItem.getDate().toString());
+
             }else{
-//                // Set the display's name to the recipe's name
-//                TextView recipeName = (TextView) convertView.findViewById(R.id.recipeName);
-//                recipeName.setText(rowItem.getName());
-//
-//                // Sets the image of the icon to the recipe's image (uses the search icon temporarily)
-//                ImageView recipeImage = (ImageView) convertView.findViewById(R.id.recipeThumbnail);
-//                recipeImage.setImageResource(R.drawable.ic_action_action_search);
+                // Set the display's name to the shopping list's name
+                TextView text = (TextView) convertView.findViewById(android.R.id.text1);
+                text.setText(rowItem.getDate().toString());
             }
 
             return convertView;
