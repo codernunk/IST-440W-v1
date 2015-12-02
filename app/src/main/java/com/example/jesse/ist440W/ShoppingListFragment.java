@@ -1,4 +1,3 @@
-
 package com.example.jesse.ist440W;
 
 import android.app.Activity;
@@ -20,17 +19,18 @@ import android.widget.Toast;
 import com.example.jesse.ist440W.data.local.SQLiteDataAccess;
 import com.example.jesse.ist440W.models.App;
 import com.example.jesse.ist440W.models.Recipe;
+import com.example.jesse.ist440W.models.ShoppingList;
 import com.example.jesse.ist440W.services.SyncService;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecipeListFragment extends ListFragment {
+public class ShoppingListFragment extends ListFragment {
 
-    private RecipeListAdapter adapter;
+    private ShoppingListAdapter _adapter;
 
-    private ArrayList<Recipe> filteredRecipes;
+    private ArrayList<ShoppingList> _filteredShoppingLists;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,13 +41,13 @@ public class RecipeListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        filteredRecipes = new ArrayList<Recipe>();
-        for (Recipe r : App.getInstance().getRecipes()){
-            filteredRecipes.add(r);
-        }
+        _filteredShoppingLists = new ArrayList<ShoppingList>();
+//        for (Recipe r : App.getInstance().getRecipes()){
+//            _filteredShoppingLists.add(r);
+//        }
 
-        adapter = new RecipeListAdapter(this.getContext(), R.layout.recipe_list_view, filteredRecipes);
-        setListAdapter(adapter);
+        _adapter = new ShoppingListAdapter(this.getContext(), R.layout.recipe_list_view, _filteredShoppingLists);
+        setListAdapter(_adapter);
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -67,72 +67,72 @@ public class RecipeListFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recipe_list, container, false);
+        return inflater.inflate(R.layout.fragment_shopping_list, container, false);
     }
 
     public void filterRecipes(String searchStr){
-        filteredRecipes = new ArrayList<Recipe>();
-        for (Recipe r : App.getInstance().getRecipes()){
-            if (r.getName().toLowerCase().contains(searchStr)){
-                filteredRecipes.add(r);
-            }
-        }
-        adapter.refresh(filteredRecipes);
+//        _filteredShoppingLists = new ArrayList<ShoppingList>();
+//        for (Recipe r : App.getInstance().getRecipes()){
+//            if (r.getName().toLowerCase().contains(searchStr)){
+//                _filteredShoppingLists.add(r);
+//            }
+//        }
+//        _adapter.refresh(_filteredShoppingLists);
     }
 
     public void resetFilteredRecipes(){
-        filteredRecipes = new ArrayList<Recipe>();
-        for (Recipe r : App.getInstance().getRecipes()){
-            filteredRecipes.add(r);
-        }
-        adapter.refresh(filteredRecipes);
+//        _filteredShoppingLists = new ArrayList<ShoppingList>();
+//        for (Recipe r : App.getInstance().getRecipes()){
+//            _filteredShoppingLists.add(r);
+//        }
+//        _adapter.refresh(_filteredShoppingLists);
     }
 
     /**
      * An inner class that helps to construct list items
      * that show recipes.
      */
-    private class RecipeListAdapter extends ArrayAdapter<Recipe>{
+    private class ShoppingListAdapter extends ArrayAdapter<ShoppingList>{
 
         private Context _context;
 
-        public RecipeListAdapter(Context context, int textViewResourceId, List<Recipe> objects) {
+        public ShoppingListAdapter(Context context, int textViewResourceId, List<ShoppingList> objects) {
             super(context, textViewResourceId, objects);
             // TODO Auto-generated constructor stub
             this._context = context;
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            Recipe rowItem = getItem(position);
+            ShoppingList rowItem = getItem(position);
 
             LayoutInflater mInflater = (LayoutInflater) _context
                     .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.recipe_list_view, null);
 
-                // Set the display's name to the recipe's name
-                TextView recipeName = (TextView) convertView.findViewById(R.id.recipeName);
-                recipeName.setText(rowItem.getName());
-
-                // Sets the image of the icon to the recipe's image (uses the search icon temporarily)
-                ImageView recipeImage = (ImageView) convertView.findViewById(R.id.recipeThumbnail);
-                recipeImage.setImageResource(R.drawable.ic_action_action_search);
+//                // Set the display's name to the recipe's name
+//                TextView recipeName = (TextView) convertView.findViewById(R.id.recipeName);
+//                recipeName.setText(rowItem.getName());
+//
+//                // Sets the image of the icon to the recipe's image (uses the search icon temporarily)
+//                ImageView recipeImage = (ImageView) convertView.findViewById(R.id.recipeThumbnail);
+//                recipeImage.setImageResource(R.drawable.ic_action_action_search);
             }else{
-                // Set the display's name to the recipe's name
-                TextView recipeName = (TextView) convertView.findViewById(R.id.recipeName);
-                recipeName.setText(rowItem.getName());
-
-                // Sets the image of the icon to the recipe's image (uses the search icon temporarily)
-                ImageView recipeImage = (ImageView) convertView.findViewById(R.id.recipeThumbnail);
-                recipeImage.setImageResource(R.drawable.ic_action_action_search);
+//                // Set the display's name to the recipe's name
+//                TextView recipeName = (TextView) convertView.findViewById(R.id.recipeName);
+//                recipeName.setText(rowItem.getName());
+//
+//                // Sets the image of the icon to the recipe's image (uses the search icon temporarily)
+//                ImageView recipeImage = (ImageView) convertView.findViewById(R.id.recipeThumbnail);
+//                recipeImage.setImageResource(R.drawable.ic_action_action_search);
             }
 
             return convertView;
         }
 
-        public void refresh(List<Recipe> recipes){
+        public void refresh(List<ShoppingList> shoppingLists){
             clear();
-            addAll(recipes);
+            addAll(shoppingLists);
             notifyDataSetChanged();
         }
 

@@ -1,7 +1,5 @@
 package com.example.jesse.ist440W;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,16 +12,15 @@ import android.widget.TextView;
 import com.example.jesse.ist440W.models.Ingredient;
 import com.example.jesse.ist440W.models.Instruction;
 import com.example.jesse.ist440W.models.Recipe;
-import com.example.jesse.ist440W.services.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class CookingDirectionsFragment extends Fragment {
+public class RecipeIngredientsFragment extends Fragment {
 
-    TextView txtRecipeName;
-    ListView lvDirections;
+    TextView _txtRecipeName;
+    ListView _lvIngredients;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,26 +31,27 @@ public class CookingDirectionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_cooking_directions, container, false);
+        View view = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
         Recipe r = ((RecipeDetailsActivity)getActivity()).getCurrentRecipe();
 
-        txtRecipeName = (TextView)view.findViewById(R.id.tvRecipeName);
-        txtRecipeName.setText(r.getName());
+        _txtRecipeName = (TextView)view.findViewById(R.id.tvRecipeName);
 
-        // Display the instructions as a list of strings
-        List<String> directionsList = new ArrayList<String>();
+        _txtRecipeName.setText(r.getName());
 
-        for (Instruction i : r.getInstructions()){
-            directionsList.add(i.getOrderId() + ". " + i.getInstructions());
+        // Display the ingredients as a list of strings
+        List<String> ingredientsList = new ArrayList<String>();
+
+        for (Ingredient i : r.getIngredients()){
+            ingredientsList.add(i.getQuantity() + " " + i.getDescriptor() + " " + i.getName());
         }
 
-        ArrayAdapter<String> directionsArrayAdapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> ingredientsArrayAdapter = new ArrayAdapter<String>(
                 getContext(),
                 android.R.layout.simple_list_item_1,
-                directionsList);
+                ingredientsList);
 
-        lvDirections = (ListView) view.findViewById(R.id.lvDirections);
-        lvDirections.setAdapter(directionsArrayAdapter);
+        _lvIngredients = (ListView) view.findViewById(R.id.lvIngredients);
+        _lvIngredients.setAdapter(ingredientsArrayAdapter);
 
         // Inflate the layout for this fragment
         return view;

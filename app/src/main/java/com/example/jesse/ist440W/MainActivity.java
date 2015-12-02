@@ -1,6 +1,8 @@
 package com.example.jesse.ist440W;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,32 +14,57 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+
+import com.example.jesse.ist440W.models.App;
+import com.example.jesse.ist440W.models.Recipe;
+import com.example.jesse.ist440W.services.SyncService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private ViewPager viewPager;
+    private Toolbar _toolbar;
+    private ViewPager _viewPager;
+    private TabLayout _tabLayout;
+    private Button _addRecipe;
+
+    private RecipeListFragment _recipeListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(_toolbar);
 
-//        viewPager = (ViewPager) findViewById(R.id.viewpager);
-//        setupViewPager(viewPager);
+        _addRecipe = (Button) findViewById(R.id.btnAddRecipe);
+        _addRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), AddRecipeActivity.class);
+                startActivity(i);
+            }
+        });
+
+        App.getInstance().init(this);
+
+        _viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(_viewPager);
+
+        _tabLayout = (TabLayout) findViewById(R.id.tabs);
+        _tabLayout.setupWithViewPager(_viewPager);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new RecipeDetailsFragment(), "Overview");
-        adapter.addFragment(new CookingDirectionsFragment(), "Directions");
-        adapter.addFragment(new RecipeShoppingListFragment(), "Shopping List");
+        adapter.addFragment(new RecipeListFragment(), "Recipes");
+        adapter.addFragment(new ShoppingListFragment(), "Shopping Lists");
+
+        _recipeListFragment = (RecipeListFragment)adapter.getItem(0);
         viewPager.setAdapter(adapter);
     }
 
@@ -50,6 +77,36 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //_recipeListFragment.filterRecipes(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                _recipeListFragment.filterRecipes(newText);
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                _recipeListFragment.resetFilteredRecipes();
+                return false;
+            }
+        });
+
+        MenuItem syncItem = menu.findItem(R.id.action_sync);
+        syncItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                SyncService.SyncRecipes(App.getInstance().getRecipes().toArray(new Recipe[App.getInstance().getRecipes().size()]));
+                return false;
+            }
+        });
 
         return super.onCreateOptionsMenu(menu);
     }

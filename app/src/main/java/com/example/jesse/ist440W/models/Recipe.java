@@ -49,6 +49,9 @@ public class Recipe implements Serializable {
     public int getRecipeId() {
         return recipeId;
     }
+    public void setRecipeId(int recipeId) {
+        this.recipeId = recipeId;
+    }
 
     public String getName() {
         return name;
@@ -107,15 +110,18 @@ public class Recipe implements Serializable {
     }
 
     public enum FoodType {
-        Breakfast("Breakfast"), Lunch("Lunch"), Dinner("Dinner"),
-        Dessert("Dessert"), Snack("Snack"), Other("Other");
+        Breakfast(0, "Breakfast"), Lunch(1, "Lunch"), Dinner(2, "Dinner"),
+        Dessert(3, "Dessert"), Snack(4, "Snack"), Drink(5, "Drink"), Other(6, "Other");
 
+        private int id;
         private String name;
 
-        FoodType(String name){
+        FoodType(int id, String name){
+            this.id = id;
             this.name = name;
         }
 
+        public int getId() { return this.id; }
         public String getName(){
             return this.name;
         }
