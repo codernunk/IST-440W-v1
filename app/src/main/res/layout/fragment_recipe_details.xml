@@ -4,115 +4,129 @@
     tools:context="com.example.jesse.ist440W.RecipeDetailsFragment"
     android:padding="10dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="&lt;Recipe Name>"
-        android:textSize="30dp"
-        android:id="@+id/tvRecipeName"
-        android:layout_marginTop="27dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
-    <TableLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tvRecipeName"
-        android:layout_alignStart="@+id/tvRecipeName"
-        android:layout_marginTop="100dp"
-        android:stretchColumns="1">
+        android:layout_height="wrap_content">
 
-        <TableRow
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Meal Type"
-                    android:id="@+id/tvMealTypeLabel"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:background="#bebebe"
-                    android:padding="5dp"
-                    />
-                <TextView
-                    android:layout_width="211dp"
-                    android:layout_height="match_parent"
-                    android:text="Dinner"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/tvMealType"
-                    android:padding="5dp" />
-        </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Yields"
-                    android:id="@+id/tvYieldLabel"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:background="#bebebe"
-                    android:padding="5dp" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="1 Steak"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/tvYields"
-                    android:padding="5dp" />
-        </TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="&lt;Recipe Name>"
+                android:textSize="30dp"
+                android:id="@+id/tvRecipeName"
+                android:layout_marginTop="27dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Prep Time"
-                    android:id="@+id/tvPrepTimeLabel"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:background="#bebebe"
-                    android:padding="5dp" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="1 hour"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/tvPrepTime"
-                    android:padding="5dp" />
-        </TableRow>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignStart="@+id/tvRecipeName"
+                android:stretchColumns="1"
+                android:id="@+id/tableLayout"
+                android:layout_below="@+id/ivRecipeImage">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Cook Time"
-                    android:id="@+id/tvCookTimeLabel"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:background="#bebebe"
-                    android:padding="5dp" />
-                <TextView
+                <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="30 Minutes"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/tvCookTime"
-                    android:padding="5dp" />
-        </TableRow>
-    </TableLayout>
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Meal Type"
+                        android:id="@+id/tvMealTypeLabel"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:background="#bebebe"
+                        android:padding="5dp"
+                        />
+                    <TextView
+                        android:layout_width="211dp"
+                        android:layout_height="match_parent"
+                        android:text="Dinner"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/tvMealType"
+                        android:padding="5dp" />
+                </TableRow>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="&lt;Image goes here>"
-        android:textSize="30dp"
-        android:id="@+id/textView14"
-        android:layout_marginTop="0dp"
-        android:layout_below="@+id/tvRecipeName" />
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Yields"
+                        android:id="@+id/tvYieldLabel"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:background="#bebebe"
+                        android:padding="5dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="1 Steak"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/tvYields"
+                        android:padding="5dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Prep Time"
+                        android:id="@+id/tvPrepTimeLabel"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:background="#bebebe"
+                        android:padding="5dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="1 hour"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/tvPrepTime"
+                        android:padding="5dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cook Time"
+                        android:id="@+id/tvCookTimeLabel"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:background="#bebebe"
+                        android:padding="5dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="30 Minutes"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/tvCookTime"
+                        android:padding="5dp" />
+                </TableRow>
+            </TableLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ivRecipeImage"
+                android:src="#f00000"
+                android:minHeight="200dp"
+                android:minWidth="200dp"
+                android:layout_below="@+id/tvRecipeName"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+
 
 </RelativeLayout>

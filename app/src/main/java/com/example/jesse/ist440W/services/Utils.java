@@ -26,4 +26,12 @@ public class Utils {
 
         return result.toString();
     }
+
+    public static String formatQuantity(float quantity){
+        if (quantity - (int)quantity > 0){
+            return Float.toString(quantity);
+        }
+
+        return Integer.toString((int)quantity);
+    }
 }

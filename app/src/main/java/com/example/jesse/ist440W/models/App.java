@@ -109,8 +109,9 @@ public class App {
             ArrayList<ShoppingListItem> items = new ArrayList<ShoppingListItem>();
 
             items.add(new ShoppingListItem(1, new Ingredient(1, 12, "Steak", "oz"), 1));
+            items.add(new ShoppingListItem(1, new Ingredient(1, 12, "Cake", "oz"), 1));
 
-            ShoppingList test = new ShoppingList(items);
+            ShoppingList test = new ShoppingList("Steak Test", items);
 
             _shoppingLists.add(test);
 

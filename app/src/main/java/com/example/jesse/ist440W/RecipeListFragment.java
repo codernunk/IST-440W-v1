@@ -70,7 +70,7 @@ public class RecipeListFragment extends ListFragment {
         return inflater.inflate(R.layout.fragment_recipe_list, container, false);
     }
 
-    public void filterRecipes(String searchStr){
+    public void filter(String searchStr){
         filteredRecipes = new ArrayList<Recipe>();
         for (Recipe r : App.getInstance().getRecipes()){
             if (r.getName().toLowerCase().contains(searchStr)){
@@ -80,7 +80,7 @@ public class RecipeListFragment extends ListFragment {
         adapter.refresh(filteredRecipes);
     }
 
-    public void resetFilteredRecipes(){
+    public void resetFilter(){
         filteredRecipes = new ArrayList<Recipe>();
         for (Recipe r : App.getInstance().getRecipes()){
             filteredRecipes.add(r);

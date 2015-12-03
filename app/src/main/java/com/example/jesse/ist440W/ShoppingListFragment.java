@@ -4,25 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.jesse.ist440W.data.local.SQLiteDataAccess;
 import com.example.jesse.ist440W.models.App;
-import com.example.jesse.ist440W.models.Recipe;
 import com.example.jesse.ist440W.models.ShoppingList;
-import com.example.jesse.ist440W.services.SyncService;
 
-import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,14 +44,11 @@ public class ShoppingListFragment extends ListFragment {
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Recipe r = (Recipe) parent.getItemAtPosition(position);
-//
-//                SQLiteDataAccess slda = new SQLiteDataAccess(getContext());
-//                slda.insertRecipe(r);
-//
-//                Intent i = new Intent(getActivity(), RecipeDetailsActivity.class);
-//                i.putExtra("Recipe", r);
-//                startActivity(i);
+                ShoppingList s = (ShoppingList) parent.getItemAtPosition(position);
+
+                Intent i = new Intent(getActivity(), ShoppingListDetailsActivity.class);
+                i.putExtra("ShoppingList", s);
+                startActivity(i);
             }
         });
     }
@@ -70,22 +60,22 @@ public class ShoppingListFragment extends ListFragment {
         return inflater.inflate(R.layout.fragment_shopping_list, container, false);
     }
 
-    public void filterRecipes(String searchStr){
-//        _filteredShoppingLists = new ArrayList<ShoppingList>();
-//        for (Recipe r : App.getInstance().getRecipes()){
-//            if (r.getName().toLowerCase().contains(searchStr)){
-//                _filteredShoppingLists.add(r);
-//            }
-//        }
-//        _adapter.refresh(_filteredShoppingLists);
+    public void filter(String searchStr){
+        _filteredShoppingLists = new ArrayList<ShoppingList>();
+        for (ShoppingList s : App.getInstance().getShoppingLists()){
+            if (s.getTitle().toLowerCase().contains(searchStr)){
+                _filteredShoppingLists.add(s);
+            }
+        }
+        _adapter.refresh(_filteredShoppingLists);
     }
 
-    public void resetFilteredRecipes(){
-//        _filteredShoppingLists = new ArrayList<ShoppingList>();
-//        for (Recipe r : App.getInstance().getRecipes()){
-//            _filteredShoppingLists.add(r);
-//        }
-//        _adapter.refresh(_filteredShoppingLists);
+    public void resetFilter(){
+        _filteredShoppingLists = new ArrayList<ShoppingList>();
+        for (ShoppingList s : App.getInstance().getShoppingLists()){
+            _filteredShoppingLists.add(s);
+        }
+        _adapter.refresh(_filteredShoppingLists);
     }
 
     /**
@@ -107,17 +97,25 @@ public class ShoppingListFragment extends ListFragment {
 
             LayoutInflater mInflater = (LayoutInflater) _context
                     .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+            SimpleDateFormat sds = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+
             if (convertView == null) {
-                convertView = mInflater.inflate(android.R.layout.simple_list_item_1, null);
+                convertView = mInflater.inflate(R.layout.shopping_list_list_view, null);
 
                 // Set the display's name to the shopping list's name
-                TextView text = (TextView) convertView.findViewById(android.R.id.text1);
-                text.setText(rowItem.getDate().toString());
+                TextView titleText = (TextView) convertView.findViewById(R.id.txtShoppingListTitle);
+                titleText.setText(rowItem.getTitle().toString());
 
+                TextView dateText = (TextView) convertView.findViewById(R.id.txtDate);
+                dateText.setText(sds.format(rowItem.getDate()));
             }else{
                 // Set the display's name to the shopping list's name
-                TextView text = (TextView) convertView.findViewById(android.R.id.text1);
-                text.setText(rowItem.getDate().toString());
+                TextView titleText = (TextView) convertView.findViewById(R.id.txtShoppingListTitle);
+                titleText.setText(rowItem.getTitle().toString());
+
+                TextView dateText = (TextView) convertView.findViewById(R.id.txtDate);
+                dateText.setText(sds.format(rowItem.getDate()));
             }
 
             return convertView;

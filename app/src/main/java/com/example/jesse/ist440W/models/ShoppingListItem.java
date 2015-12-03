@@ -3,7 +3,7 @@ package com.example.jesse.ist440W.models;
 /**
  * Represents one item in the shopping list.
  */
-public class ShoppingListItem {
+public class ShoppingListItem implements java.io.Serializable {
     private int shoppingListItemId;
     private Ingredient ingredient;
     private float quantity;// Overrides Ingredient's value

@@ -1,5 +1,6 @@
 package com.example.jesse.ist440W.models;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -7,19 +8,33 @@ import java.util.Date;
  * Represents a shopping list, which contains a list of Ingredients.
  * Created by Jesse on 9/22/2015.
  */
-public class ShoppingList {
+public class ShoppingList implements java.io.Serializable {
 
+    private String title;
     private Date date;
     private ArrayList<ShoppingListItem> list;
 
-    public ShoppingList(ArrayList<ShoppingListItem> list) {
-        this.list = list;
-        date = new Date();
+    public ShoppingList(String title, Date date){
+        this.title = title;
+        this.date = date;
+        this.list = new ArrayList<ShoppingListItem>();
     }
+
+    public ShoppingList(String title, ArrayList<ShoppingListItem> list) {
+        this.title = title;
+        this.date = new Date();
+        this.list = list;
+    }
+
+    public String getTitle() { return title; }
+    public Date getDate() { return date; }
 
     public ArrayList<ShoppingListItem> getList() {
         return list;
     }
 
-    public Date getDate() { return date; }
+    public String getQualifiedName() {
+        return title + ": " + new SimpleDateFormat("MM/dd/yyyy").format(date);
+    }
+
 }

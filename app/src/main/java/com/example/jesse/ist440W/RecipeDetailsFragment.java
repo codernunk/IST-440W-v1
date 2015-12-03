@@ -53,6 +53,9 @@ public class RecipeDetailsFragment extends Fragment {
         txtPrepTime.setText(Utils.formatTime(r.getPrepTime()));
         txtCookTime.setText(Utils.formatTime(r.getCookTime()));
 
+        ivRecipeImage = (ImageView)view.findViewById(R.id.ivRecipeImage);
+        ivRecipeImage.setImageResource(R.mipmap.ic_teststeak);
+
         // Inflate the layout for this fragment
         return view;
     }

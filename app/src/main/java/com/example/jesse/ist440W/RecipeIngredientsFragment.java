@@ -1,7 +1,12 @@
 package com.example.jesse.ist440W;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,11 +20,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.jesse.ist440W.models.App;
 import com.example.jesse.ist440W.models.Ingredient;
 import com.example.jesse.ist440W.models.Instruction;
 import com.example.jesse.ist440W.models.Recipe;
+import com.example.jesse.ist440W.models.ShoppingList;
+import com.example.jesse.ist440W.models.ShoppingListItem;
+import com.example.jesse.ist440W.services.Utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -38,14 +48,13 @@ public class RecipeIngredientsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_recipe_ingredients, container, false);
         Recipe r = ((RecipeDetailsActivity)getActivity()).getCurrentRecipe();
 
         _txtRecipeName = (TextView)view.findViewById(R.id.tvRecipeName);
-
         _txtRecipeName.setText(r.getName());
 
         // Display the ingredients as a list of strings
@@ -58,7 +67,63 @@ public class RecipeIngredientsFragment extends Fragment {
         _btnAddToShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Make a new shopping list activity or whatever
+
+                if (_selectedIngredients.size() > 0){
+
+                    ArrayList<String> _shoppingListNames = new ArrayList<String>();
+                    _shoppingListNames.add("+ Create new shopping list");
+                    for (ShoppingList s : App.getInstance().getShoppingLists()){
+                        _shoppingListNames.add(s.getQualifiedName());
+                    }
+
+                    // Make a new shopping list activity or whatever
+                    AlertDialog dialog = new AlertDialog.Builder(getContext())
+                            .setTitle("Add to Shopping List")
+                            .setItems(_shoppingListNames.toArray(new String[_shoppingListNames.size()]), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ShoppingList sl;
+                                    if (which == 0){
+                                        sl = new ShoppingList("NEW LIST", new Date());
+                                        App.getInstance().getShoppingLists().add(sl);
+                                    }else{
+                                        sl = App.getInstance().getShoppingLists().get(which-1);
+                                    }
+
+                                    for (Ingredient i : _selectedIngredients){
+                                        sl.getList().add(new ShoppingListItem(-1, i, 1));
+                                    }
+
+                                    Intent i = new Intent(getActivity(), ShoppingListDetailsActivity.class);
+                                    i.putExtra("ShoppingList", sl);
+                                    startActivity(i);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .create();
+
+                    dialog.show();
+                }else{
+                    // Make a new shopping list activity or whatever
+                    AlertDialog dialog = new AlertDialog.Builder(getContext())
+                            .setTitle("Add to Shopping List")
+                            .setMessage("You must select at least one ingredient to add to a shopping list.")
+                            .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .create();
+
+                    dialog.show();
+                }
+
             }
         });
 
@@ -98,9 +163,9 @@ public class RecipeIngredientsFragment extends Fragment {
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.recipe_ingredient_list_view, null);
 
-                // Set the display's name to the recipe's name
+                // Set the display name to the recipe's name
                 TextView ingredientQuantity = (TextView) convertView.findViewById(R.id.ingredientQuantity);
-                ingredientQuantity.setText(rowItem.getQuantity()+ " " + rowItem.getDescriptor());
+                ingredientQuantity.setText(Utils.formatQuantity(rowItem.getQuantity()) + " " + rowItem.getDescriptor());
 
                 TextView ingredientName = (TextView) convertView.findViewById(R.id.ingredientName);
                 ingredientName.setText(rowItem.getName());
@@ -109,9 +174,9 @@ public class RecipeIngredientsFragment extends Fragment {
                 ingredientChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked){
+                        if (isChecked) {
                             _selectedIngredients.add(rowItem);
-                        }else{
+                        } else {
                             _selectedIngredients.remove(rowItem);
                         }
 
@@ -119,13 +184,8 @@ public class RecipeIngredientsFragment extends Fragment {
                 });
 
                 _checkBoxes.add(ingredientChecked);
-                //ingredientQuantity.setText(rowItem.getName());
 
             } else {
-                // Set the display's name to the recipe's name
-//                TextView recipeName = (TextView) convertView.findViewById(R.id.recipeName);
-//                recipeName.setText(rowItem.getName());
-
             }
 
             return convertView;
@@ -136,5 +196,6 @@ public class RecipeIngredientsFragment extends Fragment {
                 c.setChecked(isChecked);
             }
         }
+
     }
 }

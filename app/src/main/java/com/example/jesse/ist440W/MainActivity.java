@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Button _addRecipe;
 
     private RecipeListFragment _recipeListFragment;
+    private ShoppingListFragment _shoppingListFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new ShoppingListFragment(), "Shopping Lists");
 
         _recipeListFragment = (RecipeListFragment)adapter.getItem(0);
+        _shoppingListFragment = (ShoppingListFragment)adapter.getItem(1);
         viewPager.setAdapter(adapter);
     }
 
@@ -81,20 +83,27 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //_recipeListFragment.filterRecipes(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                _recipeListFragment.filterRecipes(newText);
+
+                if (_viewPager.getCurrentItem() == 0){
+                    _recipeListFragment.filter(newText);
+                }else{
+                    _shoppingListFragment.filter(newText);
+                }
+
                 return false;
             }
         });
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                _recipeListFragment.resetFilteredRecipes();
+                _recipeListFragment.resetFilter();
+                _shoppingListFragment.resetFilter();
+
                 return false;
             }
         });
