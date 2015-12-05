@@ -53,9 +53,6 @@ public class RecipeListFragment extends ListFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Recipe r = (Recipe) parent.getItemAtPosition(position);
 
-                SQLiteDataAccess slda = new SQLiteDataAccess(getContext());
-                slda.insertRecipe(r);
-
                 Intent i = new Intent(getActivity(), RecipeDetailsActivity.class);
                 i.putExtra("Recipe", r);
                 startActivity(i);

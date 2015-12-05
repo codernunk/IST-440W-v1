@@ -1,8 +1,16 @@
 package com.example.jesse.ist440W.models;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+
+import com.example.jesse.ist440W.R;
+
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static android.graphics.BitmapFactory.decodeResource;
 
 /**
  * Represents one recipe.
@@ -17,6 +25,7 @@ public class Recipe implements Serializable {
     private int cookTime;
     private int yield;
     private String yieldDescriptor;
+    private byte[] image;
     private ArrayList<Instruction> instructions;
 
     public Recipe(int recipeId, String name, FoodType type, int prepTime, int cookTime, int yield, String yieldDescriptor) {
@@ -27,6 +36,7 @@ public class Recipe implements Serializable {
         this.cookTime = cookTime;
         this.yield = yield;
         this.yieldDescriptor = yieldDescriptor;
+        this.image = null;
         this.ingredients = new ArrayList<Ingredient>();
         this.instructions = new ArrayList<Instruction>();
     }
@@ -34,6 +44,7 @@ public class Recipe implements Serializable {
     public Recipe(int recipeId, String name, FoodType type, int prepTime, int cookTime, int yield, String yieldDescriptor, Ingredient[] ingredients, Instruction[] instructions) {
         this(recipeId, name, type, prepTime, cookTime, yield, yieldDescriptor);
 
+        this.image = null;
         this.ingredients = new ArrayList<Ingredient>(Arrays.asList(ingredients));
         this.instructions = new ArrayList<Instruction>(Arrays.asList(instructions));
     }
@@ -105,6 +116,17 @@ public class Recipe implements Serializable {
         this.yieldDescriptor = yieldDescriptor;
     }
 
+    public void setImageFromResource(){
+        Bitmap b = decodeResource(Resources.getSystem(), R.mipmap.ic_teststeak);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        b.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        image = stream.toByteArray();
+    }
+
+    public void setImage(byte[] image){
+        this.image = image;
+    }
+
     public ArrayList<Instruction> getInstructions() {
         return instructions;
     }
@@ -124,6 +146,15 @@ public class Recipe implements Serializable {
         public int getId() { return this.id; }
         public String getName(){
             return this.name;
+        }
+
+        public static FoodType fromInt(int val){
+            FoodType[] values = FoodType.values();
+            for (FoodType t : values){
+                if (t.getId() == val)
+                    return t;
+            }
+            return FoodType.Other;
         }
     }
 }

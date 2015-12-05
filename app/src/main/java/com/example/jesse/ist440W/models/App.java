@@ -29,25 +29,25 @@ public class App {
                     new Ingredient[]{
                             new Ingredient(-1, 1, "steak", "12 oz"),
                             new Ingredient(-1, 1, "A1 steak sauce", "12 oz bottle"),
-                            new Ingredient(-1, 1, "worcestershire sauce", "1 tbsp"),
+                            new Ingredient(-1, 1, "worcestershire sauce", "tbsp"),
                     },
                     new Instruction[]{
                             new Instruction(-1, "Grill the steak", 1),
                             new Instruction(-1, "Put sauces on it", 2),
                     }
             ),
-            new Recipe(-1, "Cake", Recipe.FoodType.Dessert, 1000, 2000, 8, "slice(s)",
+            new Recipe(-1, "Cake", Recipe.FoodType.Dessert, 1000, 2000, 8, "slices",
                     new Ingredient[]{
-                            new Ingredient(-1, 1, "cake", "12 oz"),
+                            new Ingredient(-1, 1, "cake mix", "12 oz"),
                             new Ingredient(-1, 1, "vanilla icing", "container"),
-                            new Ingredient(-1, 1, "eggs", "1 tbsp"),
+                            new Ingredient(-1, 1, "eggs", "tbsp"),
                     },
                     new Instruction[]{
                             new Instruction(-1, "Grill the cake", 1),
                             new Instruction(-1, "Put icing on it", 2),
                     }
             ),
-            new Recipe(-1, "Hamburger", Recipe.FoodType.Dinner, 1000, 2000, 8, "slice(s)",
+            new Recipe(-1, "Hamburger", Recipe.FoodType.Dinner, 1000, 2000, 8, "burgers",
                     new Ingredient[]{
                             new Ingredient(-1, 12, "ground beef", "lb"),
                             new Ingredient(-1, 1, "chopped onion", ""),
@@ -62,9 +62,9 @@ public class App {
             ),
             new Recipe(-1, "Lemonade", Recipe.FoodType.Drink, 1000, 0, 2, "liters",
                     new Ingredient[]{
-                            new Ingredient(-1, 1, "cake", "12 oz"),
-                            new Ingredient(-1, 1, "vanilla icing", "container"),
-                            new Ingredient(-1, 1, "eggs", "1 tbsp"),
+                            new Ingredient(-1, 1, "lemons", ""),
+                            new Ingredient(-1, 1, "sugar", "buttload"),
+                            new Ingredient(-1, 1, "water", "liter"),
                     },
                     new Instruction[]{
                             new Instruction(-1, "Grill the cake", 1),
@@ -98,8 +98,8 @@ public class App {
 
             _recipes = new ArrayList<Recipe>();
 
-            for (Recipe r : _defaultRecipes)
-                _recipes.add(r);
+//            for (Recipe r : _defaultRecipes)
+//                _recipes.add(r);
 
             ArrayList<Recipe> others = (new SQLiteDataAccess(context)).selectRecipes();
             _recipes.addAll(others);

@@ -33,12 +33,12 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
         RecipeTable.createTable(db);
         IngredientsTable.createTable(db);
         InstructionsTable.createTable(db);
-        RecipeIngredientsTable.createTable(db);
+        //RecipeIngredientsTable.createTable(db);
         ShoppingListsTable.createTable(db);
         ShoppingListItemsTable.createTable(db);
 
         for (Recipe r : App.getInstance().getDefaultRecipes()){
-            RecipeTable.insert(db, r);
+            insertRecipe(db, r);
         }
         // TODO: Add other tables
     }
@@ -57,14 +57,16 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
 
     public ArrayList<Recipe> selectRecipes(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor results = db.rawQuery("SELECT * FROM " + RecipeTable.TABLE_NAME, null);
+        Cursor results = db.rawQuery("SELECT * FROM " + RecipeTable.TABLE_NAME + " ORDER BY RecipeID ", null);
+        Cursor ingredientsResults = db.rawQuery("SELECT * FROM " + IngredientsTable.TABLE_NAME + " ORDER BY RecipeID", null);
+        Cursor resInstructions = db.rawQuery("SELECT * FROM " + InstructionsTable.TABLE_NAME + " ORDER BY RecipeID, OrderID", null);
 
         ArrayList<Recipe> recipes = new ArrayList<Recipe>();
 
         while (results.moveToNext()){
             Recipe r = new Recipe(results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_RECIPE_ID)),
                     results.getString(results.getColumnIndex(RecipeTable.COLUMN_NAME_NAME)),
-                    Recipe.FoodType.Dinner,//results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_TYPE)),
+                    Recipe.FoodType.fromInt(results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_TYPE))),
                     results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_PREP_TIME)),
                     results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_COOK_TIME)),
                     results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_YIELD)),
@@ -72,29 +74,52 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
 //                    results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_IMAGE)),
 //                    results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_USER_ID))
                     );
+
+
+            ingredientsResults.moveToFirst();
+            while (ingredientsResults.moveToNext()){
+                if (ingredientsResults.getInt(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_RECIPE_ID)) == r.getRecipeId()){
+                    Ingredient i = new Ingredient(ingredientsResults.getInt(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_RECIPE_ID)),
+                            ingredientsResults.getFloat(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_QUANTITY)),
+                            ingredientsResults.getString(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_NAME)),
+                            ingredientsResults.getString(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_UNIT))
+                    );
+
+                    r.addIngredient(i);
+                }
+            }
+
+            resInstructions.moveToFirst();
+            while (resInstructions.moveToNext()){
+                int recId = resInstructions.getInt(resInstructions.getColumnIndex(InstructionsTable.COLUMN_NAME_RECIPE_ID));
+                if (recId == r.getRecipeId()){
+                    Instruction i = new Instruction(
+                        resInstructions.getInt(resInstructions.getColumnIndex(InstructionsTable.COLUMN_NAME_INSTRUCTION_ID)),
+                        resInstructions.getString(resInstructions.getColumnIndex(InstructionsTable.COLUMN_NAME_DESCRIPTION)),
+                        resInstructions.getInt(resInstructions.getColumnIndex(InstructionsTable.COLUMN_NAME_ORDER))
+                    );
+
+                    r.addInstruction(i);
+                }
+            }
+
             recipes.add(r);
         }
 
         return recipes;
     }
 
-    public long insertRecipe(Recipe r){
-        SQLiteDatabase db = this.getWritableDatabase();
+    public long insertRecipe(SQLiteDatabase db, Recipe r){
+        //SQLiteDatabase db = this.getWritableDatabase();
 
         long newRowId = RecipeTable.insert(db, r);
 
         // Insert the ingredients
         for (Ingredient i : r.getIngredients()){
-            if (i.getIngredientId() == -1){
-                // Insert ingredient
-                IngredientsTable.insert(db, i);
-            }
-
-            RecipeIngredientsTable.insert(db, r, i);
+            IngredientsTable.insert(db, r, i);
         }
 
         for (int i = 0; i < r.getInstructions().size(); i++){
-
             Instruction ins = r.getInstructions().get(i);
             ins.setOrderId(i);
 
@@ -158,7 +183,7 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
 
         public static long insert(SQLiteDatabase db, Recipe r){
             ContentValues values = new ContentValues();
-            values.put(COLUMN_NAME_RECIPE_ID, r.getRecipeId());
+            //values.put(COLUMN_NAME_RECIPE_ID, r.getRecipeId());
             values.put(COLUMN_NAME_NAME, r.getName());
             values.put(COLUMN_NAME_TYPE, r.getType().getId());
             values.put(COLUMN_NAME_PREP_TIME, r.getPrepTime());
@@ -201,31 +226,39 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
     public static abstract class IngredientsTable implements BaseColumns {
         public static final String TABLE_NAME = "Ingredients";
         public static final String COLUMN_NAME_INGREDIENT_ID = "IngredientID";
+        public static final String COLUMN_NAME_RECIPE_ID = "RecipeID";
         public static final String COLUMN_NAME_NAME = "Name";
         public static final String COLUMN_NAME_TYPE = "Type";
         public static final String COLUMN_NAME_UNIT = "Unit";
+        public static final String COLUMN_NAME_QUANTITY = "Quantity";
 
         public static final String COLUMN_TYPE_INGREDIENT_ID = "INTEGER";
+        public static final String COLUMN_TYPE_RECIPE_ID = "INTEGER";
         public static final String COLUMN_TYPE_NAME = "TEXT";
         public static final String COLUMN_TYPE_TYPE = "INTEGER";
         public static final String COLUMN_TYPE_UNIT = "TEXT";
+        public static final String COLUMN_TYPE_QUANTITY = "DECIMAL(5,0)";
 
         public static void createTable(SQLiteDatabase db){
             db.execSQL(
                     "CREATE TABLE Ingredients (" +
-                            COLUMN_NAME_INGREDIENT_ID + " " + COLUMN_TYPE_INGREDIENT_ID + " PRIMARY KEY AUTOINCREMENT," +
+                            COLUMN_NAME_INGREDIENT_ID + " " + COLUMN_TYPE_INGREDIENT_ID + " PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                            COLUMN_NAME_RECIPE_ID + " " + COLUMN_TYPE_RECIPE_ID + " NOT NULL," +
                             COLUMN_NAME_NAME + " " + COLUMN_TYPE_NAME + " ," +
                             COLUMN_NAME_TYPE + " " + COLUMN_TYPE_TYPE + " ," +
-                            COLUMN_NAME_UNIT + " " + COLUMN_TYPE_UNIT +
+                            COLUMN_NAME_UNIT + " " + COLUMN_TYPE_UNIT + " ," +
+                            COLUMN_NAME_QUANTITY + " " + COLUMN_TYPE_QUANTITY +
                             ")"
             );
         }
 
-        public static long insert(SQLiteDatabase db, Ingredient i){
+        public static long insert(SQLiteDatabase db, Recipe r, Ingredient i){
             ContentValues values = new ContentValues();
+            values.put(COLUMN_NAME_RECIPE_ID, r.getRecipeId());
             values.put(COLUMN_NAME_NAME, i.getName());
-            values.put(COLUMN_NAME_TYPE, i.getDescriptor());
+            //values.put(COLUMN_NAME_TYPE, i.getDescriptor());
             values.put(COLUMN_NAME_UNIT, i.getDescriptor());
+            values.put(COLUMN_NAME_QUANTITY, i.getQuantity());
 
             long newRowId = db.insert(TABLE_NAME, "null", values);
 
@@ -251,7 +284,7 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
         public static void createTable(SQLiteDatabase db){
             db.execSQL(
                     "CREATE TABLE Instructions (" +
-                            COLUMN_NAME_INSTRUCTION_ID + " " + COLUMN_TYPE_INSTRUCTION_ID + " PRIMARY KEY AUTOINCREMENT," +
+                            COLUMN_NAME_INSTRUCTION_ID + " " + COLUMN_TYPE_INSTRUCTION_ID + " PRIMARY KEY AUTOINCREMENT NOT NULL," +
                             COLUMN_NAME_RECIPE_ID + " " + COLUMN_TYPE_RECIPE_ID + " ," +
                             COLUMN_NAME_DESCRIPTION + " " + COLUMN_TYPE_DESCRIPTION + " ," +
                             COLUMN_NAME_ORDER + " " + COLUMN_TYPE_ORDER +
@@ -261,7 +294,7 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
 
         public static long insert(SQLiteDatabase db, Recipe r, Instruction i){
             ContentValues values = new ContentValues();
-            values.put(COLUMN_NAME_INSTRUCTION_ID, i.getInstructionId());
+            //values.put(COLUMN_NAME_INSTRUCTION_ID, i.getInstructionId());
             values.put(COLUMN_NAME_RECIPE_ID, r.getRecipeId());
             values.put(COLUMN_NAME_DESCRIPTION, i.getInstructions());
             values.put(COLUMN_NAME_ORDER, i.getOrderId());
@@ -271,36 +304,36 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
     }
 
     /* Inner class that defines the table contents */
-    public static abstract class RecipeIngredientsTable implements BaseColumns {
-        public static final String TABLE_NAME = "RecipeIngredients";
-        public static final String COLUMN_NAME_RECIPE_ID = "RecipeID";
-        public static final String COLUMN_NAME_INGREDIENT_ID = "IngredientID";
-        public static final String COLUMN_NAME_QUANTITY = "Quantity";
-
-        public static final String COLUMN_TYPE_RECIPE_ID = "INTEGER";
-        public static final String COLUMN_TYPE_INGREDIENT_ID = "INTEGER";
-        public static final String COLUMN_TYPE_QUANTITY = "DECIMAL(5,0)";
-
-        public static void createTable(SQLiteDatabase db){
-            db.execSQL(
-                    "CREATE TABLE RecipeIngredients (" +
-                            COLUMN_NAME_RECIPE_ID + " " + COLUMN_TYPE_RECIPE_ID + " ," +
-                            COLUMN_NAME_INGREDIENT_ID + " " + COLUMN_TYPE_INGREDIENT_ID + " ," +
-                            COLUMN_NAME_QUANTITY + " " + COLUMN_TYPE_QUANTITY +
-                            ", PRIMARY KEY (" + COLUMN_NAME_RECIPE_ID + ", " + COLUMN_NAME_INGREDIENT_ID + ")" +
-                            ")"
-            );
-        }
-
-        public static long insert(SQLiteDatabase db, Recipe r, Ingredient i){
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_NAME_RECIPE_ID, r.getRecipeId());
-            values.put(COLUMN_NAME_INGREDIENT_ID, i.getIngredientId());
-            values.put(COLUMN_NAME_QUANTITY, i.getQuantity());
-
-            return db.insert(TABLE_NAME, "null", values);
-        }
-    }
+//    public static abstract class RecipeIngredientsTable implements BaseColumns {
+//        public static final String TABLE_NAME = "RecipeIngredients";
+//        public static final String COLUMN_NAME_RECIPE_ID = "RecipeID";
+//        public static final String COLUMN_NAME_INGREDIENT_ID = "IngredientID";
+//        public static final String COLUMN_NAME_QUANTITY = "Quantity";
+//
+//        public static final String COLUMN_TYPE_RECIPE_ID = "INTEGER";
+//        public static final String COLUMN_TYPE_INGREDIENT_ID = "INTEGER";
+//        public static final String COLUMN_TYPE_QUANTITY = "DECIMAL(5,0)";
+//
+//        public static void createTable(SQLiteDatabase db){
+//            db.execSQL(
+//                    "CREATE TABLE RecipeIngredients (" +
+//                            COLUMN_NAME_RECIPE_ID + " " + COLUMN_TYPE_RECIPE_ID + " ," +
+//                            COLUMN_NAME_INGREDIENT_ID + " " + COLUMN_TYPE_INGREDIENT_ID + " ," +
+//                            COLUMN_NAME_QUANTITY + " " + COLUMN_TYPE_QUANTITY +
+//                            ", PRIMARY KEY (" + COLUMN_NAME_RECIPE_ID + ", " + COLUMN_NAME_INGREDIENT_ID + ")" +
+//                            ")"
+//            );
+//        }
+//
+//        public static long insert(SQLiteDatabase db, Recipe r, Ingredient i){
+//            ContentValues values = new ContentValues();
+//            values.put(COLUMN_NAME_RECIPE_ID, r.getRecipeId());
+//            values.put(COLUMN_NAME_INGREDIENT_ID, i.getIngredientId());
+//            values.put(COLUMN_NAME_QUANTITY, i.getQuantity());
+//
+//            return db.insert(TABLE_NAME, "null", values);
+//        }
+//    }
 
     /* Inner class that defines the table contents */
     public static abstract class ShoppingListsTable implements BaseColumns {
