@@ -19,9 +19,8 @@ public class App {
     private static App _instance;
 
     private Context context;
-
+    private SQLiteDataAccess _dataAccess;
     private ArrayList<Recipe> _recipes;
-
     private ArrayList<ShoppingList> _shoppingLists;
 
     private Recipe[] _defaultRecipes = new Recipe[]{
@@ -95,30 +94,17 @@ public class App {
                 return;
 
             context = c;
+            _dataAccess = new SQLiteDataAccess(context);
 
-            _recipes = new ArrayList<Recipe>();
-
-//            for (Recipe r : _defaultRecipes)
-//                _recipes.add(r);
-
-            ArrayList<Recipe> others = (new SQLiteDataAccess(context)).selectRecipes();
-            _recipes.addAll(others);
-
-            _shoppingLists = new ArrayList<ShoppingList>();
-
-            ArrayList<ShoppingListItem> items = new ArrayList<ShoppingListItem>();
-
-            items.add(new ShoppingListItem(1, new Ingredient(1, 12, "Steak", "oz"), 1));
-            items.add(new ShoppingListItem(1, new Ingredient(1, 12, "Cake", "oz"), 1));
-
-            ShoppingList test = new ShoppingList("Steak Test", items);
-
-            _shoppingLists.add(test);
+            _recipes = _dataAccess.selectRecipes();
+            _shoppingLists = _dataAccess.selectShoppingLists();
 
         }catch(Exception e){
             Log.e("ERRORS", e.getMessage());
         }
     }
+
+    public SQLiteDataAccess getDataAccess() { return _dataAccess; }
 
     public ArrayList<Recipe> getRecipes() {
         return _recipes;

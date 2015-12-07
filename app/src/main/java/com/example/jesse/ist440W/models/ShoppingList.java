@@ -10,6 +10,9 @@ import java.util.Date;
  */
 public class ShoppingList implements java.io.Serializable {
 
+
+
+    private int shoppingListId;
     private String title;
     private Date date;
     private ArrayList<ShoppingListItem> list;
@@ -20,12 +23,14 @@ public class ShoppingList implements java.io.Serializable {
         this.list = new ArrayList<ShoppingListItem>();
     }
 
-    public ShoppingList(String title, ArrayList<ShoppingListItem> list) {
-        this.title = title;
-        this.date = new Date();
-        this.list = list;
+    public ShoppingList(int id, String title, Date date){
+        this(title, date);
+        this.shoppingListId = id;
     }
 
+    public int getShoppingListId() {
+        return shoppingListId;
+    }
     public String getTitle() { return title; }
     public Date getDate() { return date; }
 
@@ -35,6 +40,15 @@ public class ShoppingList implements java.io.Serializable {
 
     public String getQualifiedName() {
         return title + ": " + new SimpleDateFormat("MM/dd/yyyy").format(date);
+    }
+
+    public void setShoppingListId(int shoppingListId) {
+        this.shoppingListId = shoppingListId;
+    }
+
+
+    public void addItem(ShoppingListItem sli){
+        this.list.add(sli);
     }
 
 }

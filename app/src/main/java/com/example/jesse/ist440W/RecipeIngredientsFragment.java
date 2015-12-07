@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.jesse.ist440W.data.local.SQLiteDataAccess;
 import com.example.jesse.ist440W.models.App;
 import com.example.jesse.ist440W.models.Ingredient;
 import com.example.jesse.ist440W.models.Instruction;
@@ -82,21 +83,33 @@ public class RecipeIngredientsFragment extends Fragment {
                             .setItems(_shoppingListNames.toArray(new String[_shoppingListNames.size()]), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    ShoppingList sl;
-                                    if (which == 0){
-                                        sl = new ShoppingList("NEW LIST", new Date());
-                                        App.getInstance().getShoppingLists().add(sl);
-                                    }else{
-                                        sl = App.getInstance().getShoppingLists().get(which-1);
-                                    }
+                                    try{
+                                        ShoppingList sl;
+                                        if (which == 0){
+                                            sl = new ShoppingList("NEW LIST", new Date());
+                                            App.getInstance().getShoppingLists().add(sl);
 
-                                    for (Ingredient i : _selectedIngredients){
-                                        sl.getList().add(new ShoppingListItem(-1, i, 1));
-                                    }
+                                            for (Ingredient i : _selectedIngredients){
+                                                sl.getList().add(new ShoppingListItem(-1, i, 1));
+                                            }
 
-                                    Intent i = new Intent(getActivity(), ShoppingListDetailsActivity.class);
-                                    i.putExtra("ShoppingList", sl);
-                                    startActivity(i);
+                                            App.getInstance().getDataAccess().insertShoppingList(sl);
+                                        }else{
+                                            sl = App.getInstance().getShoppingLists().get(which-1);
+
+                                            for (Ingredient i : _selectedIngredients){
+                                                sl.getList().add(new ShoppingListItem(-1, i, 1));
+                                            }
+
+                                            App.getInstance().getDataAccess().updateShoppingList(sl);
+                                        }
+
+                                        Intent i = new Intent(getActivity(), ShoppingListDetailsActivity.class);
+                                        i.putExtra("ShoppingList", sl.getShoppingListId());
+                                        startActivity(i);
+                                    }catch (Exception e){
+
+                                    }
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

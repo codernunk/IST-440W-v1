@@ -47,7 +47,7 @@ public class ShoppingListFragment extends ListFragment {
                 ShoppingList s = (ShoppingList) parent.getItemAtPosition(position);
 
                 Intent i = new Intent(getActivity(), ShoppingListDetailsActivity.class);
-                i.putExtra("ShoppingList", s);
+                i.putExtra("ShoppingList", s.getShoppingListId());
                 startActivity(i);
             }
         });

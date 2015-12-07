@@ -6,13 +6,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import com.example.jesse.ist440W.models.App;
 import com.example.jesse.ist440W.models.Ingredient;
 import com.example.jesse.ist440W.models.Instruction;
 import com.example.jesse.ist440W.models.Recipe;
+import com.example.jesse.ist440W.models.ShoppingList;
+import com.example.jesse.ist440W.models.ShoppingListItem;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Represents the base structure for all queries
@@ -76,10 +81,9 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
                     );
 
 
-            ingredientsResults.moveToFirst();
             while (ingredientsResults.moveToNext()){
                 if (ingredientsResults.getInt(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_RECIPE_ID)) == r.getRecipeId()){
-                    Ingredient i = new Ingredient(ingredientsResults.getInt(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_RECIPE_ID)),
+                    Ingredient i = new Ingredient(ingredientsResults.getInt(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_INGREDIENT_ID)),
                             ingredientsResults.getFloat(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_QUANTITY)),
                             ingredientsResults.getString(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_NAME)),
                             ingredientsResults.getString(ingredientsResults.getColumnIndex(IngredientsTable.COLUMN_NAME_UNIT))
@@ -88,8 +92,8 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
                     r.addIngredient(i);
                 }
             }
+            ingredientsResults.moveToFirst();
 
-            resInstructions.moveToFirst();
             while (resInstructions.moveToNext()){
                 int recId = resInstructions.getInt(resInstructions.getColumnIndex(InstructionsTable.COLUMN_NAME_RECIPE_ID));
                 if (recId == r.getRecipeId()){
@@ -102,6 +106,7 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
                     r.addInstruction(i);
                 }
             }
+            resInstructions.moveToFirst();
 
             recipes.add(r);
         }
@@ -139,7 +144,90 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
 
     public boolean deleteRecipe(Recipe r){
         SQLiteDatabase db = this.getWritableDatabase();
-        return RecipeTable.delete(db, r);
+        return RecipeTable.delete(db, r) && IngredientsTable.delete(db, r) && InstructionsTable.delete(db, r);
+    }
+
+    public ArrayList<ShoppingList> selectShoppingLists(){
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor results = db.rawQuery("SELECT * FROM " + ShoppingListsTable.TABLE_NAME, null);
+            Cursor results2 = db.rawQuery("SELECT * FROM ShoppingListItems, Ingredients WHERE ShoppingListItems.IngredientID = Ingredients.IngredientID", null);
+
+            ArrayList<ShoppingList> lists = new ArrayList<ShoppingList>();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd HH:mm:ss", Locale.getDefault());
+
+            while (results.moveToNext()) {
+
+                ShoppingList sl = new ShoppingList(
+                        results.getInt(results.getColumnIndex(ShoppingListsTable.COLUMN_NAME_SHOPPING_LIST_ID)),
+                        results.getString(results.getColumnIndex(ShoppingListsTable.COLUMN_NAME_TITLE)),
+                        sdf.parse(results.getString(results.getColumnIndex(ShoppingListsTable.COLUMN_NAME_CREATE_DATE)))
+                );
+
+                while (results2.moveToNext()) {
+                    if (results2.getInt(results2.getColumnIndex(ShoppingListItemsTable.COLUMN_NAME_SHOPPING_LIST_ID)) == sl.getShoppingListId()) {
+
+                        Ingredient i = new Ingredient(results2.getInt(results2.getColumnIndex(IngredientsTable.COLUMN_NAME_INGREDIENT_ID)),
+                                results2.getFloat(results2.getColumnIndex(IngredientsTable.COLUMN_NAME_QUANTITY)),
+                                results2.getString(results2.getColumnIndex(IngredientsTable.COLUMN_NAME_NAME)),
+                                results2.getString(results2.getColumnIndex(IngredientsTable.COLUMN_NAME_UNIT))
+                        );
+
+                        ShoppingListItem sli = new ShoppingListItem(
+                                results2.getInt(results2.getColumnIndex(ShoppingListItemsTable.COLUMN_NAME_SHOPPING_LIST_ITEM_ID)),
+                                i,
+                                0
+                        );
+                        sli.setIsDone(results2.getInt(results2.getColumnIndex(ShoppingListItemsTable.COLUMN_NAME_IS_CHECKED)) == 1 ? true : false);
+
+                        sl.addItem(sli);
+                    }
+                }
+                results2.moveToFirst();
+
+                lists.add(sl);
+            }
+
+            return lists;
+        }catch (Exception e){
+            Log.e("ERRORS", e.getMessage());
+            return null;
+        }
+    }
+
+    public long insertShoppingList(ShoppingList sl){
+        return insertShoppingList(this.getWritableDatabase(), sl);
+    }
+
+    public long insertShoppingList(SQLiteDatabase db, ShoppingList sl){
+        long newRowId = ShoppingListsTable.insert(db, sl);
+
+        for (ShoppingListItem sli : sl.getList()){
+            ShoppingListItemsTable.insert(db, sl, sli);
+        }
+
+        return newRowId;
+    }
+
+    public void updateShoppingList(ShoppingList sl){
+        updateShoppingList(this.getWritableDatabase(), sl);
+    }
+
+    public void updateShoppingList(SQLiteDatabase db, ShoppingList sl){
+
+        for (ShoppingListItem sli : sl.getList()){
+            if (sli.getShoppingListItemId() != -1){
+                ShoppingListItemsTable.update(db, sl, sli);
+            } else {
+                ShoppingListItemsTable.insert(db, sl, sli);
+            }
+
+        }
+    }
+
+    public void updateShoppingListItem(ShoppingList sl, ShoppingListItem sli){
+        ShoppingListItemsTable.update(this.getWritableDatabase(), sl, sli);
     }
 
     /* Inner class that defines the table contents */
@@ -216,8 +304,8 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
         }
 
         public static boolean delete(SQLiteDatabase db, Recipe r){
-            return db.delete(RecipeTable.TABLE_NAME,
-                    "id = ? ",
+            return db.delete(TABLE_NAME,
+                    "RecipeID = ? ",
                     new String[] { Integer.toString(r.getRecipeId()) }) > 0;
         }
     }
@@ -266,6 +354,12 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
 
             return newRowId;
         }
+
+        public static boolean delete(SQLiteDatabase db, Recipe r){
+            return db.delete(TABLE_NAME,
+                    "RecipeID = ? ",
+                    new String[] { Integer.toString(r.getRecipeId()) }) > 0;
+        }
     }
 
     /* Inner class that defines the table contents */
@@ -300,6 +394,12 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
             values.put(COLUMN_NAME_ORDER, i.getOrderId());
 
             return db.insert(TABLE_NAME, "null", values);
+        }
+
+        public static boolean delete(SQLiteDatabase db, Recipe r){
+            return db.delete(TABLE_NAME,
+                    "RecipeID = ? ",
+                    new String[] { Integer.toString(r.getRecipeId()) }) > 0;
         }
     }
 
@@ -339,18 +439,32 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
     public static abstract class ShoppingListsTable implements BaseColumns {
         public static final String TABLE_NAME = "ShoppingLists";
         public static final String COLUMN_NAME_SHOPPING_LIST_ID = "ShoppingListID";
-        public static final String COLUMN_NAME_RECIPE_ID = "RecipeID";
+        public static final String COLUMN_NAME_TITLE = "Title";
+        public static final String COLUMN_NAME_CREATE_DATE = "CreateDate";
 
         public static final String COLUMN_TYPE_SHOPPING_LIST_ID = "INTEGER";
-        public static final String COLUMN_TYPE_RECIPE_ID = "INTEGER";
+        public static final String COLUMN_TYPE_TITLE = "TEXT";
+        public static final String COLUMN_TYPE_CREATE_DATE = "DATETIME";
 
         public static void createTable(SQLiteDatabase db){
             db.execSQL(
                     "CREATE TABLE ShoppingLists (" +
-                            COLUMN_NAME_SHOPPING_LIST_ID + " " + COLUMN_TYPE_SHOPPING_LIST_ID + " PRIMARY KEY AUTOINCREMENT," +
-                            COLUMN_NAME_RECIPE_ID + " " + COLUMN_TYPE_RECIPE_ID +
+                            COLUMN_NAME_SHOPPING_LIST_ID + " " + COLUMN_TYPE_SHOPPING_LIST_ID + " PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                            COLUMN_NAME_TITLE + " " + COLUMN_TYPE_TITLE + " , " +
+                            COLUMN_NAME_CREATE_DATE + " " + COLUMN_TYPE_CREATE_DATE +
                             ")"
             );
+        }
+        public static long insert(SQLiteDatabase db, ShoppingList sl){
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_NAME_TITLE, sl.getTitle());
+            values.put(COLUMN_NAME_CREATE_DATE, new SimpleDateFormat("yy-MM-dd HH:mm:ss").format(sl.getDate()));
+
+            long newRowId = db.insert(TABLE_NAME, "null", values);
+
+            sl.setShoppingListId((int)newRowId);
+
+            return newRowId;
         }
     }
 
@@ -379,6 +493,36 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
                             COLUMN_NAME_IS_CHECKED + " " + COLUMN_TYPE_IS_CHECKED +
                             ")"
             );
+        }
+
+        public static long insert(SQLiteDatabase db, ShoppingList sl, ShoppingListItem sli){
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_NAME_SHOPPING_LIST_ID, sl.getShoppingListId());
+            values.put(COLUMN_NAME_INGREDIENT_ID, sli.getIngredient().getIngredientId());
+            //values.put(COLUMN_NAME_QUANTITY, sl.getTitle());
+            values.put(COLUMN_NAME_IS_CHECKED, sli.isDone());
+
+            long newRowId = db.insert(TABLE_NAME, "null", values);
+
+            sli.setShoppingListItemId((int) newRowId);
+
+            return newRowId;
+        }
+
+        public static void update(SQLiteDatabase db, ShoppingList sl, ShoppingListItem sli){
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_NAME_SHOPPING_LIST_ID, sl.getShoppingListId());
+            values.put(COLUMN_NAME_INGREDIENT_ID, sli.getIngredient().getIngredientId());
+            //values.put(COLUMN_NAME_QUANTITY, sl.getTitle());
+            values.put(COLUMN_NAME_IS_CHECKED, sli.isDone());
+
+            db.update(TABLE_NAME, values, "ShoppingListItemID = ? ", new String[]{Integer.toString(sli.getShoppingListItemId())});
+        }
+
+        public static boolean delete(SQLiteDatabase db, ShoppingList sl){
+            return db.delete(TABLE_NAME,
+                    "ShoppingListID = ? ",
+                    new String[] { Integer.toString(sl.getShoppingListId()) }) > 0;
         }
     }
 

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.jesse.ist440W.data.local.SQLiteDataAccess;
 import com.example.jesse.ist440W.models.App;
+import com.example.jesse.ist440W.models.Ingredient;
 import com.example.jesse.ist440W.models.Recipe;
 import com.example.jesse.ist440W.services.SyncService;
 
@@ -72,6 +73,13 @@ public class RecipeListFragment extends ListFragment {
         for (Recipe r : App.getInstance().getRecipes()){
             if (r.getName().toLowerCase().contains(searchStr)){
                 filteredRecipes.add(r);
+            }else{
+                for (Ingredient i : r.getIngredients()){
+                    if (i.getName().toLowerCase().contains(searchStr)){
+                        filteredRecipes.add(r);
+                        break;
+                    }
+                }
             }
         }
         adapter.refresh(filteredRecipes);

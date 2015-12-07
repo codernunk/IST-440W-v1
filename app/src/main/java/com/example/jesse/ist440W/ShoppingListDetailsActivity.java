@@ -1,7 +1,9 @@
 package com.example.jesse.ist440W;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -49,7 +52,14 @@ public class ShoppingListDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if (intent != null){
-            _currentShoppingList = (ShoppingList)intent.getSerializableExtra("ShoppingList");
+            int id = intent.getIntExtra("ShoppingList", -1);
+
+            for (ShoppingList sl :  App.getInstance().getShoppingLists()){
+                if (sl.getShoppingListId() == id) {
+                    _currentShoppingList = sl;
+                    break;
+                }
+            }
 
             _txtTitle = (TextView) findViewById(R.id.txtShoppingListTitle);
             _txtTitle.setText(_currentShoppingList.getTitle());
@@ -57,7 +67,7 @@ public class ShoppingListDetailsActivity extends AppCompatActivity {
             _txtDate = (TextView) findViewById(R.id.txtShoppingListDate);
             _txtDate.setText("Created on " + new SimpleDateFormat("MM/dd/yyyy hh:mm a").format(_currentShoppingList.getDate()));
 
-            ItemsListAdapter adapter = new ItemsListAdapter(getApplicationContext(), R.layout.recipe_ingredient_list_view, _currentShoppingList.getList());
+            ItemsListAdapter adapter = new ItemsListAdapter(getApplicationContext(), R.layout.recipe_ingredient_list_shopping_list_view, _currentShoppingList.getList());
 
             _lvItems = (ListView) findViewById(R.id.listView);
             _lvItems.setAdapter(adapter);
@@ -81,34 +91,51 @@ public class ShoppingListDetailsActivity extends AppCompatActivity {
             _checkBoxes = new ArrayList<CheckBox>();
         }
 
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             final ShoppingListItem rowItem = getItem(position);
 
             LayoutInflater mInflater = (LayoutInflater) _context
                     .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.recipe_ingredient_list_view, null);
-
-                // Set the display name to the recipe's name
-                TextView ingredientQuantity = (TextView) convertView.findViewById(R.id.ingredientQuantity);
-                ingredientQuantity.setText("");
-
-                TextView ingredientName = (TextView) convertView.findViewById(R.id.ingredientName);
-                ingredientName.setText(rowItem.getIngredient().getName());
-
-                CheckBox ingredientChecked = (CheckBox) convertView.findViewById(R.id.ingredientChecked);
-                if (rowItem.isDone())
-                    ingredientChecked.setChecked(true);
-
-                ingredientChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        rowItem.setIsDone(isChecked);
-                    }
-                });
-
-                _checkBoxes.add(ingredientChecked);
+                convertView = mInflater.inflate(R.layout.recipe_ingredient_list_shopping_list_view, null);
             }
+
+            TextView ingredientName = (TextView) convertView.findViewById(R.id.ingredientName);
+            ingredientName.setText(rowItem.getIngredient().getName());
+
+            CheckBox ingredientChecked = (CheckBox) convertView.findViewById(R.id.ingredientChecked);
+            ingredientChecked.setChecked(rowItem.isDone());
+
+            ingredientChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    rowItem.setIsDone(isChecked);
+                    App.getInstance().getDataAccess().updateShoppingListItem(_currentShoppingList, rowItem);
+                }
+            });
+
+            ImageButton btnDelete = (ImageButton) convertView.findViewById(R.id.btnDelete);
+            btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog ad = new AlertDialog.Builder(ShoppingListDetailsActivity.this)
+                            .setTitle("Delete")
+                            .setMessage("Are you sure you want to remove the ingredient, "+rowItem.getIngredient().getName()+ ", from the shopping list?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do delete shit
+                                    _currentShoppingList.getList().remove(rowItem);
+                                    ItemsListAdapter.this.notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null).create();
+
+                    ad.show();
+                }
+            });
+
+            _checkBoxes.add(ingredientChecked);
 
             return convertView;
         }
