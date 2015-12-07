@@ -82,13 +82,11 @@ public class ShoppingListDetailsActivity extends AppCompatActivity {
     private class ItemsListAdapter extends ArrayAdapter<ShoppingListItem> {
 
         private Context _context;
-        private ArrayList<CheckBox> _checkBoxes;
 
         public ItemsListAdapter(Context context, int textViewResourceId, List<ShoppingListItem> objects) {
             super(context, textViewResourceId, objects);
             // TODO Auto-generated constructor stub
             this._context = context;
-            _checkBoxes = new ArrayList<CheckBox>();
         }
 
         public View getView(final int position, View convertView, ViewGroup parent) {
@@ -98,52 +96,87 @@ public class ShoppingListDetailsActivity extends AppCompatActivity {
                     .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.recipe_ingredient_list_shopping_list_view, null);
+
+                TextView ingredientName = (TextView) convertView.findViewById(R.id.ingredientName);
+                ingredientName.setText(rowItem.getIngredient().getName());
+
+                CheckBox ingredientChecked = (CheckBox) convertView.findViewById(R.id.ingredientChecked);
+                ingredientChecked.setChecked(rowItem.isDone());
+
+                ingredientChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        rowItem.setIsDone(isChecked);
+                        App.getInstance().getDataAccess().updateShoppingListItem(_currentShoppingList, rowItem);
+                    }
+                });
+
+                ImageButton btnDelete = (ImageButton) convertView.findViewById(R.id.btnDelete);
+                btnDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog ad = new AlertDialog.Builder(ShoppingListDetailsActivity.this)
+                                .setTitle("Delete")
+                                .setMessage("Are you sure you want to remove the ingredient, "+rowItem.getIngredient().getName()+ ", from the shopping list?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        App.getInstance().getDataAccess().deleteShoppingListItem(rowItem);
+                                        _currentShoppingList.getList().remove(rowItem);
+                                        ItemsListAdapter.this.notifyDataSetChanged();
+                                        //refresh();
+                                    }
+                                })
+                                .setNegativeButton("Cancel", null).create();
+
+                        ad.show();
+                    }
+                });
+
+            } else {
+                TextView ingredientName = (TextView) convertView.findViewById(R.id.ingredientName);
+                ingredientName.setText(rowItem.getIngredient().getName());
+
+                CheckBox ingredientChecked = (CheckBox) convertView.findViewById(R.id.ingredientChecked);
+                ingredientChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        rowItem.setIsDone(isChecked);
+                        App.getInstance().getDataAccess().updateShoppingListItem(_currentShoppingList, rowItem);
+                    }
+                });
+                ingredientChecked.setChecked(rowItem.isDone());
+
+                ImageButton btnDelete = (ImageButton) convertView.findViewById(R.id.btnDelete);
+                btnDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog ad = new AlertDialog.Builder(ShoppingListDetailsActivity.this)
+                                .setTitle("Delete")
+                                .setMessage("Are you sure you want to remove the ingredient, "+rowItem.getIngredient().getName()+ ", from the shopping list?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        App.getInstance().getDataAccess().deleteShoppingListItem(rowItem);
+                                        _currentShoppingList.getList().remove(rowItem);
+                                        ItemsListAdapter.this.notifyDataSetChanged();
+                                        //refresh();
+                                    }
+                                })
+                                .setNegativeButton("Cancel", null).create();
+
+                        ad.show();
+                    }
+                });
             }
-
-            TextView ingredientName = (TextView) convertView.findViewById(R.id.ingredientName);
-            ingredientName.setText(rowItem.getIngredient().getName());
-
-            CheckBox ingredientChecked = (CheckBox) convertView.findViewById(R.id.ingredientChecked);
-            ingredientChecked.setChecked(rowItem.isDone());
-
-            ingredientChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    rowItem.setIsDone(isChecked);
-                    App.getInstance().getDataAccess().updateShoppingListItem(_currentShoppingList, rowItem);
-                }
-            });
-
-            ImageButton btnDelete = (ImageButton) convertView.findViewById(R.id.btnDelete);
-            btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog ad = new AlertDialog.Builder(ShoppingListDetailsActivity.this)
-                            .setTitle("Delete")
-                            .setMessage("Are you sure you want to remove the ingredient, "+rowItem.getIngredient().getName()+ ", from the shopping list?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // do delete shit
-                                    _currentShoppingList.getList().remove(rowItem);
-                                    ItemsListAdapter.this.notifyDataSetChanged();
-                                }
-                            })
-                            .setNegativeButton("Cancel", null).create();
-
-                    ad.show();
-                }
-            });
-
-            _checkBoxes.add(ingredientChecked);
 
             return convertView;
         }
 
-        public void selectAllCheckBoxes(boolean isChecked){
-            for (CheckBox c: _checkBoxes){
-                c.setChecked(isChecked);
-            }
+        public void refresh(){
+            clear();
+            addAll(_currentShoppingList.getList());
+            notifyDataSetChanged();
         }
     }
 

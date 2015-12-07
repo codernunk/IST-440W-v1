@@ -115,8 +115,6 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
     }
 
     public long insertRecipe(SQLiteDatabase db, Recipe r){
-        //SQLiteDatabase db = this.getWritableDatabase();
-
         long newRowId = RecipeTable.insert(db, r);
 
         // Insert the ingredients
@@ -228,6 +226,10 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
 
     public void updateShoppingListItem(ShoppingList sl, ShoppingListItem sli){
         ShoppingListItemsTable.update(this.getWritableDatabase(), sl, sli);
+    }
+
+    public boolean deleteShoppingListItem(ShoppingListItem sli){
+        return ShoppingListItemsTable.delete(this.getWritableDatabase(), sli);
     }
 
     /* Inner class that defines the table contents */
@@ -519,10 +521,10 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
             db.update(TABLE_NAME, values, "ShoppingListItemID = ? ", new String[]{Integer.toString(sli.getShoppingListItemId())});
         }
 
-        public static boolean delete(SQLiteDatabase db, ShoppingList sl){
+        public static boolean delete(SQLiteDatabase db, ShoppingListItem sli){
             return db.delete(TABLE_NAME,
-                    "ShoppingListID = ? ",
-                    new String[] { Integer.toString(sl.getShoppingListId()) }) > 0;
+                    "ShoppingListItemID = ? ",
+                    new String[] { Integer.toString(sli.getShoppingListItemId()) }) > 0;
         }
     }
 

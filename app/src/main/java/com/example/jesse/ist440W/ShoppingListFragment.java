@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.jesse.ist440W.models.App;
 import com.example.jesse.ist440W.models.ShoppingList;
+import com.example.jesse.ist440W.models.ShoppingListItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -105,17 +108,17 @@ public class ShoppingListFragment extends ListFragment {
 
                 // Set the display's name to the shopping list's name
                 TextView titleText = (TextView) convertView.findViewById(R.id.txtShoppingListTitle);
-                titleText.setText(rowItem.getTitle().toString());
+                titleText.setText(getColor(rowItem, rowItem.getTitle().toString()));
 
                 TextView dateText = (TextView) convertView.findViewById(R.id.txtDate);
-                dateText.setText(sds.format(rowItem.getDate()));
+                dateText.setText(getColor(rowItem, sds.format(rowItem.getDate())));
             }else{
                 // Set the display's name to the shopping list's name
                 TextView titleText = (TextView) convertView.findViewById(R.id.txtShoppingListTitle);
-                titleText.setText(rowItem.getTitle().toString());
+                titleText.setText(getColor(rowItem, rowItem.getTitle().toString()));
 
                 TextView dateText = (TextView) convertView.findViewById(R.id.txtDate);
-                dateText.setText(sds.format(rowItem.getDate()));
+                dateText.setText(getColor(rowItem, sds.format(rowItem.getDate())));
             }
 
             return convertView;
@@ -125,6 +128,20 @@ public class ShoppingListFragment extends ListFragment {
             clear();
             addAll(shoppingLists);
             notifyDataSetChanged();
+        }
+
+        public Spanned getColor(ShoppingList sl, String str){
+            boolean isDone = true;
+            for (ShoppingListItem sli : sl.getList()){
+                if (!sli.isDone())
+                    isDone = false;
+            }
+
+            if (isDone){
+                return Html.fromHtml("<span style='color: green'>" + str + "</span>");
+            }else{
+                return Html.fromHtml(str);
+            }
         }
 
     }
