@@ -1,11 +1,15 @@
 package com.example.jesse.ist440W.models;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Debug;
 import android.util.Log;
 
+import com.example.jesse.ist440W.R;
 import com.example.jesse.ist440W.data.local.SQLiteDataAccess;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -24,7 +28,7 @@ public class App {
     private ArrayList<ShoppingList> _shoppingLists;
 
     private Recipe[] _defaultRecipes = new Recipe[]{
-            new Recipe(-1, "Steak", Recipe.FoodType.Dinner, 2000, 1000, 1, "steak",
+            new Recipe(-1, "Steak", Recipe.FoodType.Dinner, 1800, 3600, 1, "steak",
                     new Ingredient[]{
                             new Ingredient(-1, 1, "steak", "12 oz"),
                             new Ingredient(-1, 1, "A1 steak sauce", "12 oz bottle"),
@@ -35,7 +39,7 @@ public class App {
                             new Instruction(-1, "Put sauces on it", 2),
                     }
             ),
-            new Recipe(-1, "Cake", Recipe.FoodType.Dessert, 1000, 2000, 8, "slices",
+            new Recipe(-1, "Cake", Recipe.FoodType.Dessert, 1800, 1800, 8, "slices",
                     new Ingredient[]{
                             new Ingredient(-1, 1, "cake mix", "12 oz"),
                             new Ingredient(-1, 1, "vanilla icing", "container"),
@@ -46,7 +50,7 @@ public class App {
                             new Instruction(-1, "Put icing on it", 2),
                     }
             ),
-            new Recipe(-1, "Hamburger", Recipe.FoodType.Dinner, 1000, 2000, 8, "burgers",
+            new Recipe(-1, "Hamburger", Recipe.FoodType.Dinner, 900, 900, 8, "burgers",
                     new Ingredient[]{
                             new Ingredient(-1, 12, "ground beef", "lb"),
                             new Ingredient(-1, 1, "chopped onion", ""),
@@ -59,15 +63,17 @@ public class App {
                             new Instruction(-1, "Cook for about 10 minutes on each side", 3),
                     }
             ),
-            new Recipe(-1, "Lemonade", Recipe.FoodType.Drink, 1000, 0, 2, "liters",
+            new Recipe(-1, "Lemonade", Recipe.FoodType.Drink, 600, 0, 2, "liters",
                     new Ingredient[]{
-                            new Ingredient(-1, 1, "lemons", ""),
-                            new Ingredient(-1, 1, "sugar", "buttload"),
-                            new Ingredient(-1, 1, "water", "liter"),
+                            new Ingredient(-1, 8, "lemons", ""),
+                            new Ingredient(-1, 6, "sugar", "tbsp"),
+                            new Ingredient(-1, 2, "water", "liter"),
                     },
                     new Instruction[]{
-                            new Instruction(-1, "Grill the cake", 1),
-                            new Instruction(-1, "Put icing on it", 2),
+                            new Instruction(-1, "Fill a 2L pitcher with water.", 1),
+                            new Instruction(-1, "Cut the lemons in half.", 2),
+                            new Instruction(-1, "Squeeze each half of the lemons into the pitcher.", 3),
+                            new Instruction(-1, "Stir in the sugar.", 4),
                     }
             ),
     };
@@ -94,14 +100,36 @@ public class App {
                 return;
 
             context = c;
+
+            byte[] steakImg = getImage(c, R.mipmap.ic_teststeak);
+            byte[] cakeImg = getImage(c, R.mipmap.ic_testcake);
+            byte[] burgerImg = getImage(c, R.mipmap.ic_testburger);
+            byte[] lemonadeImg = getImage(c, R.mipmap.ic_testlemonade);
+
+            _defaultRecipes[0].setImage(steakImg);
+            _defaultRecipes[1].setImage(cakeImg);
+            _defaultRecipes[2].setImage(burgerImg);
+            _defaultRecipes[3].setImage(lemonadeImg);
+
+            _defaultRecipes[0].setRating(5);
+            _defaultRecipes[1].setRating(4);
+            _defaultRecipes[2].setRating(3);
+            _defaultRecipes[3].setRating(3.5f);
+
             _dataAccess = new SQLiteDataAccess(context);
 
             _recipes = _dataAccess.selectRecipes();
             _shoppingLists = _dataAccess.selectShoppingLists();
-
         }catch(Exception e){
             Log.e("ERRORS", e.getMessage());
         }
+    }
+
+    public byte[] getImage(Context c, int resource){
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(), resource);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        return stream.toByteArray();
     }
 
     public SQLiteDataAccess getDataAccess() { return _dataAccess; }

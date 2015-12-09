@@ -18,8 +18,8 @@
 
         <ImageView
             android:id="@+id/recipeThumbnail"
-            android:layout_width="50dip"
-            android:layout_height="50dip"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:contentDescription=""/>
     </LinearLayout>
 
@@ -36,6 +36,16 @@
         android:typeface="sans"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/thumbnail" />
+
+    <RatingBar
+        android:id="@+id/rbRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:numStars="5"
+        android:rating="4"
+        android:isIndicator="true" />
 
     <!--&lt;!&ndash; Description &ndash;&gt;-->
 

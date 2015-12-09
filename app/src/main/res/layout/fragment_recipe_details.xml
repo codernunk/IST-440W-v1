@@ -6,7 +6,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView2">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -111,6 +112,35 @@
                         android:id="@+id/tvCookTime"
                         android:padding="5dp" />
                 </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rating"
+                        android:id="@+id/txtRating"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:background="#bebebe"
+                        android:padding="5dp" />
+
+                    <RelativeLayout>
+                        <RatingBar
+                            android:id="@+id/rbRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="false"
+                            android:numStars="5"
+                            android:rating="4"
+                            android:isIndicator="false"
+                            android:layout_column="1"
+                            android:layout_alignParentStart="true" />
+                    </RelativeLayout>
+
+                </TableRow>
             </TableLayout>
 
             <ImageView
@@ -123,9 +153,11 @@
                 android:layout_below="@+id/tvRecipeName"
                 android:layout_centerHorizontal="true" />
 
+
         </RelativeLayout>
 
     </ScrollView>
+
 
 
 

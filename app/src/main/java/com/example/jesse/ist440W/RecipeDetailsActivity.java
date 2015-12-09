@@ -45,13 +45,22 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if (intent != null){
-            _currentRecipe = (Recipe)intent.getSerializableExtra("Recipe");
+            int id = intent.getIntExtra("Recipe", 0);
+            for (Recipe rec : App.getInstance().getRecipes()){
+                if (rec.getRecipeId() == id){
+                    _currentRecipe = rec;
+                    break;
+                }
+            }
+
             Log.d(App.LOG_TITLE, "Retrieved " + _currentRecipe.getName());
         }
 
     }
 
-    public Recipe getCurrentRecipe() { return _currentRecipe; }
+    public Recipe getCurrentRecipe() {
+        return _currentRecipe;
+    }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());

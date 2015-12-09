@@ -17,12 +17,20 @@ public class Utils {
 
         StringBuilder result = new StringBuilder();
 
-        if (hour > 0)
-            result.append(hour + " hour(s), ");
-        if (minute > 0)
-            result.append(minute + " minute(s), ");
-        if (displaySeconds > 0)
-            result.append(displaySeconds + " second(s)");
+        if (hour == 1)
+            result.append(hour + " hour ");
+        else if (hour > 0)
+            result.append(hour + " hours ");
+
+        if (minute == 1)
+            result.append(minute + " minute ");
+        else if (minute > 0)
+            result.append(minute + " minutes ");
+
+        if (displaySeconds == 1)
+            result.append(displaySeconds + " second");
+        else if (displaySeconds > 0)
+            result.append(displaySeconds + " seconds");
 
         return result.toString();
     }

@@ -75,9 +75,9 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
                     results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_PREP_TIME)),
                     results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_COOK_TIME)),
                     results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_YIELD)),
-                    results.getString(results.getColumnIndex(RecipeTable.COLUMN_NAME_YIELD_DESCRIPTOR))
-//                    results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_IMAGE)),
-//                    results.getInt(results.getColumnIndex(RecipeTable.COLUMN_NAME_USER_ID))
+                    results.getString(results.getColumnIndex(RecipeTable.COLUMN_NAME_YIELD_DESCRIPTOR)),
+                    results.getBlob(results.getColumnIndex(RecipeTable.COLUMN_NAME_IMAGE)),
+                    results.getFloat(results.getColumnIndex(RecipeTable.COLUMN_NAME_RATING))
                     );
 
 
@@ -243,7 +243,7 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
         public static final String COLUMN_NAME_YIELD = "Yield";
         public static final String COLUMN_NAME_YIELD_DESCRIPTOR = "YieldDescriptor";
         public static final String COLUMN_NAME_IMAGE = "Image";
-        public static final String COLUMN_NAME_USER_ID = "UserID";
+        public static final String COLUMN_NAME_RATING = "Rating";
 
         public static final String COLUMN_TYPE_RECIPE_ID = "INTEGER";
         public static final String COLUMN_TYPE_NAME = "TEXT";
@@ -253,7 +253,7 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
         public static final String COLUMN_TYPE_YIELD = "INTEGER";
         public static final String COLUMN_TYPE_YIELD_DESCRIPTOR = "TEXT";
         public static final String COLUMN_TYPE_IMAGE = "BLOB";
-        public static final String COLUMN_TYPE_USER_ID = "INTEGER";
+        public static final String COLUMN_TYPE_RATING = "DECIMAL(5,0)";
 
         public static void createTable(SQLiteDatabase db){
             db.execSQL(
@@ -266,7 +266,7 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
                             COLUMN_NAME_YIELD + " " + COLUMN_TYPE_YIELD + " ," +
                             COLUMN_NAME_YIELD_DESCRIPTOR + " " + COLUMN_TYPE_YIELD_DESCRIPTOR + " ," +
                             COLUMN_NAME_IMAGE + " " + COLUMN_TYPE_IMAGE + " ," +
-                            COLUMN_NAME_USER_ID + " " + COLUMN_TYPE_USER_ID +
+                            COLUMN_NAME_RATING + " " + COLUMN_TYPE_RATING +
                             ")"
             );
         }
@@ -280,8 +280,8 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
             values.put(COLUMN_NAME_COOK_TIME, r.getCookTime());
             values.put(COLUMN_NAME_YIELD, r.getYield());
             values.put(COLUMN_NAME_YIELD_DESCRIPTOR, r.getYieldDescriptor());
-            values.put(COLUMN_NAME_IMAGE, 0);
-            values.put(COLUMN_NAME_USER_ID, 0);
+            values.put(COLUMN_NAME_IMAGE, r.getImage());
+            values.put(COLUMN_NAME_RATING, r.getRating());
 
             long newRowId = db.insert(RecipeTable.TABLE_NAME, "null", values);
 
@@ -299,10 +299,10 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
             values.put(COLUMN_NAME_COOK_TIME, r.getCookTime());
             values.put(COLUMN_NAME_YIELD, r.getYield());
             values.put(COLUMN_NAME_YIELD_DESCRIPTOR, r.getYieldDescriptor());
-            values.put(COLUMN_NAME_IMAGE, 0);
-            values.put(COLUMN_NAME_USER_ID, 0);
+            values.put(COLUMN_NAME_IMAGE, r.getImage());
+            values.put(COLUMN_NAME_RATING, r.getRating());
 
-            db.update(TABLE_NAME, values, "id = ? ", new String[]{Integer.toString(r.getRecipeId())});
+            db.update(TABLE_NAME, values, "RecipeID = ? ", new String[]{Integer.toString(r.getRecipeId())});
         }
 
         public static boolean delete(SQLiteDatabase db, Recipe r){

@@ -26,9 +26,10 @@ public class Recipe implements Serializable {
     private int yield;
     private String yieldDescriptor;
     private byte[] image;
+    private float rating;
     private ArrayList<Instruction> instructions;
 
-    public Recipe(int recipeId, String name, FoodType type, int prepTime, int cookTime, int yield, String yieldDescriptor) {
+    public Recipe(int recipeId, String name, FoodType type, int prepTime, int cookTime, int yield, String yieldDescriptor, byte[] image, float rating) {
         this.recipeId = recipeId;
         this.name = name;
         this.type = type;
@@ -36,15 +37,15 @@ public class Recipe implements Serializable {
         this.cookTime = cookTime;
         this.yield = yield;
         this.yieldDescriptor = yieldDescriptor;
-        this.image = null;
+        this.image = image;
+        this.rating = rating;
         this.ingredients = new ArrayList<Ingredient>();
         this.instructions = new ArrayList<Instruction>();
     }
 
     public Recipe(int recipeId, String name, FoodType type, int prepTime, int cookTime, int yield, String yieldDescriptor, Ingredient[] ingredients, Instruction[] instructions) {
-        this(recipeId, name, type, prepTime, cookTime, yield, yieldDescriptor);
+        this(recipeId, name, type, prepTime, cookTime, yield, yieldDescriptor, null, 0);
 
-        this.image = null;
         this.ingredients = new ArrayList<Ingredient>(Arrays.asList(ingredients));
         this.instructions = new ArrayList<Instruction>(Arrays.asList(instructions));
     }
@@ -116,6 +117,8 @@ public class Recipe implements Serializable {
         this.yieldDescriptor = yieldDescriptor;
     }
 
+    public byte[] getImage() { return image; }
+
     public void setImageFromResource(){
         Bitmap b = decodeResource(Resources.getSystem(), R.mipmap.ic_teststeak);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -126,6 +129,10 @@ public class Recipe implements Serializable {
     public void setImage(byte[] image){
         this.image = image;
     }
+
+    public float getRating() { return this.rating; }
+
+    public void setRating(float value) { this.rating = value; }
 
     public ArrayList<Instruction> getInstructions() {
         return instructions;

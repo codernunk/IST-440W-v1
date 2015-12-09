@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ import com.example.jesse.ist440W.models.Recipe;
 import com.example.jesse.ist440W.models.ShoppingList;
 import com.example.jesse.ist440W.models.ShoppingListItem;
 import com.example.jesse.ist440W.services.Utils;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -83,32 +86,10 @@ public class RecipeIngredientsFragment extends Fragment {
                             .setItems(_shoppingListNames.toArray(new String[_shoppingListNames.size()]), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    try{
-                                        ShoppingList sl;
-                                        if (which == 0){
-                                            sl = new ShoppingList("NEW LIST", new Date());
-                                            App.getInstance().getShoppingLists().add(sl);
-
-                                            for (Ingredient i : _selectedIngredients){
-                                                sl.getList().add(new ShoppingListItem(-1, i, 1));
-                                            }
-
-                                            App.getInstance().getDataAccess().insertShoppingList(sl);
-                                        }else{
-                                            sl = App.getInstance().getShoppingLists().get(which-1);
-
-                                            for (Ingredient i : _selectedIngredients){
-                                                sl.getList().add(new ShoppingListItem(-1, i, 1));
-                                            }
-
-                                            App.getInstance().getDataAccess().updateShoppingList(sl);
-                                        }
-
-                                        Intent i = new Intent(getActivity(), ShoppingListDetailsActivity.class);
-                                        i.putExtra("ShoppingList", sl.getShoppingListId());
-                                        startActivity(i);
-                                    }catch (Exception e){
-
+                                    if (which == 0){
+                                        showNameShoppingListDialog();
+                                    }else if (which > 0){
+                                        addToShoppingList(which);
                                     }
                                 }
                             })
@@ -152,6 +133,68 @@ public class RecipeIngredientsFragment extends Fragment {
         return view;
     }
 
+    public void showNameShoppingListDialog(){
+        View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_name_shopping_list, null);
+        final TextView tv = (TextView) view.findViewById(R.id.txtName);
+
+        AlertDialog nameDialog = new AlertDialog.Builder(getContext())
+                .setView(view)
+                .setTitle("Name Shopping List")
+                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        makeShoppingList(tv.getText().toString());
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                }).create();
+        nameDialog.show();
+    }
+
+    public void makeShoppingList(String name){
+        try{
+            if (name.isEmpty())
+                name = "Unnamed List";
+
+            ShoppingList sl = new ShoppingList(name, new Date());
+            App.getInstance().getShoppingLists().add(sl);
+
+            for (Ingredient i : _selectedIngredients){
+                sl.getList().add(new ShoppingListItem(-1, i, 1));
+            }
+
+            App.getInstance().getDataAccess().insertShoppingList(sl);
+
+            Intent i = new Intent(getActivity(), ShoppingListDetailsActivity.class);
+            i.putExtra("ShoppingList", sl.getShoppingListId());
+            startActivity(i);
+        }catch (Exception e){
+            Log.e("ERROR", e.getMessage());
+        }
+    }
+
+    public void addToShoppingList(int which){
+        try{
+            ShoppingList sl = App.getInstance().getShoppingLists().get(which-1);
+
+            for (Ingredient i : _selectedIngredients){
+                sl.getList().add(new ShoppingListItem(-1, i, 1));
+            }
+
+            App.getInstance().getDataAccess().updateShoppingList(sl);
+
+            Intent i = new Intent(getActivity(), ShoppingListDetailsActivity.class);
+            i.putExtra("ShoppingList", sl.getShoppingListId());
+            startActivity(i);
+        }catch (Exception e){
+            Log.e("ERROR", e.getMessage());
+        }
+    }
+
     /**
      * An inner class that helps to construct list items
      * that show recipes.
@@ -187,9 +230,9 @@ public class RecipeIngredientsFragment extends Fragment {
                 ingredientChecked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
+                        if (isChecked && !_selectedIngredients.contains(rowItem)) {
                             _selectedIngredients.add(rowItem);
-                        } else {
+                        } else if (!isChecked) {
                             _selectedIngredients.remove(rowItem);
                         }
 

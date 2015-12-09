@@ -4,6 +4,8 @@ package com.example.jesse.ist440W;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.Rating;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.v4.app.ListFragment;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,7 +58,7 @@ public class RecipeListFragment extends ListFragment {
                 Recipe r = (Recipe) parent.getItemAtPosition(position);
 
                 Intent i = new Intent(getActivity(), RecipeDetailsActivity.class);
-                i.putExtra("Recipe", r);
+                i.putExtra("Recipe", r.getRecipeId());
                 startActivity(i);
             }
         });
@@ -121,7 +124,10 @@ public class RecipeListFragment extends ListFragment {
 
                 // Sets the image of the icon to the recipe's image (uses the search icon temporarily)
                 ImageView recipeImage = (ImageView) convertView.findViewById(R.id.recipeThumbnail);
-                recipeImage.setImageResource(R.drawable.ic_action_action_search);
+                recipeImage.setImageBitmap(BitmapFactory.decodeByteArray(rowItem.getImage(), 0, rowItem.getImage().length));
+
+                RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.rbRating);
+                ratingBar.setRating(rowItem.getRating());
             }else{
                 // Set the display's name to the recipe's name
                 TextView recipeName = (TextView) convertView.findViewById(R.id.recipeName);
@@ -129,7 +135,10 @@ public class RecipeListFragment extends ListFragment {
 
                 // Sets the image of the icon to the recipe's image (uses the search icon temporarily)
                 ImageView recipeImage = (ImageView) convertView.findViewById(R.id.recipeThumbnail);
-                recipeImage.setImageResource(R.drawable.ic_action_action_search);
+                recipeImage.setImageBitmap(BitmapFactory.decodeByteArray(rowItem.getImage(), 0, rowItem.getImage().length));
+
+                RatingBar ratingBar = (RatingBar) convertView.findViewById(R.id.rbRating);
+                ratingBar.setRating(rowItem.getRating());
             }
 
             return convertView;
