@@ -114,6 +114,10 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
         return recipes;
     }
 
+    public long insertRecipe(Recipe r){
+        return insertRecipe(this.getWritableDatabase(), r);
+    }
+
     public long insertRecipe(SQLiteDatabase db, Recipe r){
         long newRowId = RecipeTable.insert(db, r);
 
@@ -149,7 +153,8 @@ public class SQLiteDataAccess extends SQLiteOpenHelper{
         try {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor results = db.rawQuery("SELECT * FROM " + ShoppingListsTable.TABLE_NAME, null);
-            Cursor results2 = db.rawQuery("SELECT * FROM ShoppingListItems, Ingredients WHERE ShoppingListItems.IngredientID = Ingredients.IngredientID", null);
+            Cursor results2 =
+                    db.rawQuery("SELECT * FROM ShoppingListItems, Ingredients WHERE ShoppingListItems.IngredientID = Ingredients.IngredientID", null);
 
             ArrayList<ShoppingList> lists = new ArrayList<ShoppingList>();
 
